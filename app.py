@@ -3,7 +3,7 @@ import sqlite3
 
 st.set_page_config(page_title="Barangay Tracker", layout="wide")
 
-# Database Setup 'to
+# Database (don't)
 def init_dbs():
     with sqlite3.connect("Users.db") as cu:
         cu.execute("""
@@ -23,18 +23,29 @@ def init_dbs():
             cu.commit()
 
     with sqlite3.connect("Residents.db") as cr:
+        # UPDATED SCHEMA WITH ALL 10 REQUESTED FIELDS
         cr.execute("""
             CREATE TABLE IF NOT EXISTS residents (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, sex TEXT, age INTEGER, 
-                status TEXT, dob TEXT, birth_place TEXT, address TEXT, other_info TEXT
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                surname TEXT, first_name TEXT, middle_name TEXT,
+                dob TEXT, birth_place TEXT, household_no TEXT,
+                sex TEXT, contact_info TEXT, address TEXT, 
+                duration_residence TEXT, residency_status TEXT, 
+                civil_status TEXT, citizenship TEXT, occupation TEXT
             )
         """)
         cursor = cr.cursor()
         cursor.execute("SELECT COUNT(*) FROM residents")
         if cursor.fetchone() == 0:
-            cr.executemany("INSERT INTO residents (name, sex, age, status, dob, birth_place, address, other_info) VALUES (?,?,?,?,?,?,?,?)", [
-                ("Juan Dela Cruz", "Male", 28, "Active", "1998-05-12", "Manila", "123 Rizal St.", "Purok 1"),
-                ("Maria Clara", "Female", 24, "Active", "2002-08-20", "Cebu", "456 Mabini St.", "Purok 3")
+            cr.executemany("""
+                INSERT INTO residents (
+                    surname, first_name, middle_name, dob, birth_place, household_no,
+                    sex, contact_info, address, duration_residence, residency_status, 
+                    civil_status, citizenship, occupation
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """, [
+                ("Dela Cruz", "Juan", "Protacio", "1998-05-12", "Manila", "HH-001", "Male", "09171234567", "123 Rizal St., Purok 1", "5 Years", "Resident", "Single", "Filipino", "Software Engineer"),
+                ("Clara", "Maria", "Santos", "2002-08-20", "Cebu", "HH-042", "Female", "09187654321", "456 Mabini St., Purok 3", "2 Years", "Resident", "Married", "Filipino", "Teacher")
             ])
             cr.commit()
 
@@ -56,19 +67,13 @@ def logout():
 
 # Authentication Router
 if not st.session_state.logged_in:
-    # Delete mo to makikita sidebar sa login page
     st.markdown(
         """
         <style>
-            [data-testid="stSidebar"] {
-                display: none;
-            }
-            [data-testid="stSidebarCollapseButton"] {
-                display: none;
-            }
+            [data-testid="stSidebar"] { display: none; }
+            [data-testid="stSidebarCollapseButton"] { display: none; }
         </style>
-        """,
-        unsafe_allow_html=True,
+        """, unsafe_allow_html=True
     )
     
     st.markdown("<h1 style='text-align: center;'>Barangay Residents Tracker</h1>", unsafe_allow_html=True)
@@ -89,13 +94,11 @@ if not st.session_state.logged_in:
                 else:
                     st.error("Invalid credentials")
 else:
-    # Sidebar layout rules pag naka login na
     with st.sidebar:
         st.write(f"**Logged in as:** {st.session_state.username} ({st.session_state.access_level})")
         if st.button("Log Out", type="primary", use_container_width=True):
             logout()
 
-    # Dynamic Navigation Routing Setup
     pages = [
         st.Page("pages/home.py", title="Home", icon="🏠"),
         st.Page("pages/profile.py", title="Resident Profiles", icon="👤"),

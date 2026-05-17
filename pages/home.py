@@ -4,40 +4,39 @@ import sqlite3
 
 st.title("Home - Resident Directory")
 
-# Filter and Search Controls
 c1, c2 = st.columns(2)
-search = c1.text_input("Search Name")
-sort = c2.selectbox("Sort By", ["None", "Alphabetical", "Sex"])
+search = c1.text_input("Search Name (First, Middle, or Surname)")
+sort = c2.selectbox("Sort By", ["None", "Surname", "Sex"])
 
 with sqlite3.connect("Residents.db") as conn:
-    query = "SELECT * FROM residents WHERE 1=1"
+    query = "SELECT *, (surname || ', ' || first_name || ' ' || middle_name) as full_name FROM residents WHERE 1=1"
     params = []
     if search:
-        query += " AND name LIKE ?"
-        params.append(f"%{search}%")
-    if sort == "Alphabetical":
-        query += " ORDER BY name ASC"
+        query += " AND (surname LIKE ? OR first_name LIKE ? OR middle_name LIKE ?)"
+        params.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
+    if sort == "Surname":
+        query += " ORDER BY surname ASC"
     elif sort == "Sex":
         query += " ORDER BY sex ASC"
     df = pd.read_sql_query(query, conn, params=params)
 
-# Header Row Layout
 st.markdown("---")
-cols = st.columns([3, 1, 1, 3, 2])
-cols[0].markdown("**Name**")
-cols[1].markdown("**Sex**")
-cols[2].markdown("**Age**")
-cols[3].markdown("**Address**")
-cols[4].markdown("**Action**")
 
-# Data Presentation loop
+# Organized Header
+col_n, col_s, col_h, col_st, col_b = st.columns([3, 1, 1.5, 1.5, 1.5])
+col_n.markdown("**Full Name**")
+col_s.markdown("**Sex**")
+col_h.markdown("**Household No.**")
+col_st.markdown("**Residency Status**")
+col_b.markdown("**Action**")
+
 for _, row in df.iterrows():
-    cols = st.columns([3, 1, 1, 3, 2])
-    cols[0].write(row["name"])
-    cols[1].write(row["sex"])
-    cols[2].write(str(row["age"]))
-    cols[3].write(row["address"])
-    if cols[4].button("View Profile", key=f"v_{row['id']}"):
+    col_n, col_s, col_h, col_st, col_b = st.columns([3, 1, 1.5, 1.5, 1.5])
+    col_n.write(f"{row['surname']}, {row['first_name']} {row['middle_name']}")
+    col_s.write(row["sex"])
+    col_h.write(row["household_no"])
+    col_st.write(row["residency_status"])
+    if col_b.button("View Profile", key=f"v_{row['id']}", use_container_width=True):
         st.session_state.selected_resident_id = int(row["id"])
         st.session_state.sub_page = "View"
         st.switch_page("pages/profile.py")
