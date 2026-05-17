@@ -3,7 +3,7 @@ import sqlite3
 
 st.set_page_config(page_title="Barangay Tracker", layout="wide")
 
-# Database setup
+# Database Setup 'to
 def init_dbs():
     with sqlite3.connect("Users.db") as cu:
         cu.execute("""
@@ -56,7 +56,7 @@ def logout():
 
 # Authentication Router
 if not st.session_state.logged_in:
-    # --- ADD THIS CSS BLOCK TO HIDE THE SIDEBAR ---
+    # Delete mo to makikita sidebar sa login page
     st.markdown(
         """
         <style>
@@ -89,7 +89,7 @@ if not st.session_state.logged_in:
                 else:
                     st.error("Invalid credentials")
 else:
-    # Sidebar layout rules (Only runs when logged_in is True)
+    # Sidebar layout rules pag naka login na
     with st.sidebar:
         st.write(f"**Logged in as:** {st.session_state.username} ({st.session_state.access_level})")
         if st.button("Log Out", type="primary", use_container_width=True):

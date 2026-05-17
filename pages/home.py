@@ -4,7 +4,7 @@ import sqlite3
 
 st.title("Home - Resident Directory")
 
-# Filter controls
+# Filter and Search Controls
 c1, c2 = st.columns(2)
 search = c1.text_input("Search Name")
 sort = c2.selectbox("Sort By", ["None", "Alphabetical", "Sex"])

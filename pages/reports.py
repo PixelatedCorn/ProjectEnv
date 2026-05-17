@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 import matplotlib.pyplot as plt
-
+# following galing AI, not working and i have no idea kung paano rin gawin yung pie chart, so ignore this for now, baka may time pa ako to fix it later, pero for now, focus muna tayo sa ibang pages
+#-PixelatedCorn
 st.title("Data Metrics & Visual Summary")
 
 with sqlite3.connect("Residents.db") as conn:

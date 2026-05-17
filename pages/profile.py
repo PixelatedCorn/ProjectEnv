@@ -7,7 +7,7 @@ if "selected_resident_id" not in st.session_state:
 
 mode = st.session_state.sub_page
 
-# --- ADD PROFILE SCREEN ---
+# ADD PROFILE SCREEN 
 if mode == "Add":
     st.title("Add Resident Profile")
     with st.form("add_form"):
@@ -28,7 +28,7 @@ if mode == "Add":
             st.success("Saved successfully!")
             st.switch_page("pages/home.py")
 
-# --- VIEW/EDIT SCREENS ---
+# VIEW/EDIT SCREENS 
 else:
     rid = st.session_state.selected_resident_id
     if not rid:
