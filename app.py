@@ -3,7 +3,7 @@ import sqlite3
 
 st.set_page_config(page_title="Barangay Tracker", layout="wide")
 
-# Database (don't)
+# Initialize Databases
 def init_dbs():
     with sqlite3.connect("Users.db") as cu:
         cu.execute("""
@@ -23,7 +23,6 @@ def init_dbs():
             cu.commit()
 
     with sqlite3.connect("Residents.db") as cr:
-        # UPDATED SCHEMA WITH ALL 10 REQUESTED FIELDS
         cr.execute("""
             CREATE TABLE IF NOT EXISTS residents (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -31,7 +30,10 @@ def init_dbs():
                 dob TEXT, birth_place TEXT, household_no TEXT,
                 sex TEXT, contact_info TEXT, address TEXT, 
                 duration_residence TEXT, residency_status TEXT, 
-                civil_status TEXT, citizenship TEXT, occupation TEXT
+                civil_status TEXT, citizenship TEXT, occupation TEXT,
+                age INTEGER,
+                purok TEXT,
+                last_modified_by TEXT  -- <-- AUTOMATIC TRACKER COLUMN ADDED
             )
         """)
         cursor = cr.cursor()
@@ -41,17 +43,17 @@ def init_dbs():
                 INSERT INTO residents (
                     surname, first_name, middle_name, dob, birth_place, household_no,
                     sex, contact_info, address, duration_residence, residency_status, 
-                    civil_status, citizenship, occupation
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    civil_status, citizenship, occupation, age, purok, last_modified_by
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """, [
-                ("Dela Cruz", "Juan", "Protacio", "1998-05-12", "Manila", "HH-001", "Male", "09171234567", "123 Rizal St., Purok 1", "5 Years", "Resident", "Single", "Filipino", "Software Engineer"),
-                ("Clara", "Maria", "Santos", "2002-08-20", "Cebu", "HH-042", "Female", "09187654321", "456 Mabini St., Purok 3", "2 Years", "Resident", "Married", "Filipino", "Teacher")
+                ("Dela Cruz", "Juan", "Protacio", "1998-05-12", "Manila", "HH-001", "Male", "09171234567", "123 Rizal St.", "5 Years", "Resident", "Single", "Filipino", "Software Engineer", 28, "Purok 1", "system_seed"),
+                ("Clara", "Maria", "Santos", "2002-08-20", "Cebu", "HH-042", "Female", "09187654321", "456 Mabini St.", "2 Years", "Resident", "Married", "Filipino", "Teacher", 24, "Purok 3", "system_seed")
             ])
             cr.commit()
 
 init_dbs()
 
-# State Management
+# State Management Initialization
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 if "username" not in st.session_state:
@@ -65,7 +67,7 @@ def logout():
     st.session_state.logged_in = False
     st.rerun()
 
-# Authentication Router
+# Router Setup
 if not st.session_state.logged_in:
     st.markdown(
         """
@@ -94,18 +96,36 @@ if not st.session_state.logged_in:
                 else:
                     st.error("Invalid credentials")
 else:
+    st.session_state.home_route = st.Page("pages/home.py", title="Home", icon="🏠")
+    st.session_state.report_route = st.Page("pages/reports.py", title="Report Part", icon="📊")
+    st.session_state.account_route = st.Page("pages/accounts.py", title="Account Handling", icon="⚙️")
+    st.session_state.profile_route = st.Page("pages/profile.py", title="Resident Profile", icon="👤")
+
     with st.sidebar:
+        if st.session_state.access_level in ["Admin", "Editor"]:
+            if st.button("➕ Add New Resident", use_container_width=True):
+                st.session_state.sub_page = "Add"
+                st.switch_page(st.session_state.profile_route)
+        
+        st.write("---")
         st.write(f"**Logged in as:** {st.session_state.username} ({st.session_state.access_level})")
+        st.write("---")
+
         if st.button("Log Out", type="primary", use_container_width=True):
             logout()
 
-    pages = [
-        st.Page("pages/home.py", title="Home", icon="🏠"),
-        st.Page("pages/profile.py", title="Resident Profiles", icon="👤"),
-        st.Page("pages/reports.py", title="Report Part", icon="📊")
-    ]
+    visible_navigation_array = [st.session_state.home_route, st.session_state.report_route, st.session_state.profile_route]
     if st.session_state.access_level == "Admin":
-        pages.append(st.Page("pages/accounts.py", title="Account Handling", icon="⚙️"))
+        visible_navigation_array.append(st.session_state.account_route)
 
-    pg = st.navigation(pages)
+    st.markdown(
+        """
+        <style>
+            a[href*="profile"] { display: none !important; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    pg = st.navigation(visible_navigation_array)
     pg.run()
