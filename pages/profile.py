@@ -2,6 +2,64 @@ import streamlit as st
 import sqlite3
 from datetime import datetime, date
 
+st.markdown("""
+<style>
+
+/* Background */
+.stApp {
+    background-color: #f4f8fc;
+}
+
+/* Titles */
+h1, h2, h3 {
+    color: #1E3A5F;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Section Containers */
+.section-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0px 3px 12px rgba(0,0,0,0.05);
+    border-left: 5px solid #1E3A5F;
+}
+
+/* Inputs */
+.stTextInput input,
+.stTextArea textarea,
+.stDateInput input,
+.stSelectbox div[data-baseweb="select"] {
+    border-radius: 10px;
+}
+
+/* Buttons */
+.stButton button,
+.stDownloadButton button,
+.stFormSubmitButton button {
+    background-color: #1E3A5F;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+}
+
+.stButton button:hover,
+.stDownloadButton button:hover,
+.stFormSubmitButton button:hover {
+    background-color: #27496d;
+    color: white;
+}
+
+/* Alerts */
+.stAlert {
+    border-radius: 12px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 if "selected_resident_id" not in st.session_state:
     st.session_state.selected_resident_id = None
 
@@ -20,6 +78,7 @@ def calculate_age(birth_date):
 # --- ADD RESIDENT ---
 if mode == "Add":
     st.title("Add New Resident Profile")
+    st.caption("Create and register a new barangay resident profile.")
     with st.form("add_form"):
         st.subheader("Personal Information")
         n1, n2, n3 = st.columns(3)
@@ -78,6 +137,28 @@ else:
         res = conn.execute("SELECT * FROM residents WHERE id=?", (rid,)).fetchone()
 
     if mode == "View":
+        st.markdown("""
+    <style>
+
+    .profile-card{
+        background: white;
+        padding: 25px;
+        border-radius: 18px;
+        border: 1px solid #dbe7f3;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        margin-bottom: 20px;
+    }
+
+    .section-title{
+        color: #163B65;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+        
         st.title(f"Resident Profile: {res['surname']}, {res['first_name']}")
         
         # --- TRACKER LOG VISIBLE DISPLAY ---
@@ -93,7 +174,9 @@ else:
         if res["residency_status"] == "Archived":
             st.error("📂 **Status Alert:** This record is currently Archived.")
 
-        st.subheader("Personal Information")
+        st.markdown('<div class="profile-card">', unsafe_allow_html=True)
+        
+        st.markdown('<div class="section-title"> Personal Information</div>', unsafe_allow_html=True)
         n1, n2, n3 = st.columns(3)
         n1.text_input("Surname", res["surname"], disabled=True)
         n2.text_input("First Name", res["first_name"], disabled=True)
@@ -103,8 +186,9 @@ else:
         c1.text_input("Sex", res["sex"], disabled=True)
         c2.text_input("Age (Auto-Calculated)", str(resident_age), disabled=True)
         c3.text_input("Civil Status", res["civil_status"], disabled=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.subheader("Birth & Family Structure")
+        st.markdown('<div class="section-title"> Birth & Family Structure</div>', unsafe_allow_html=True)
         b1, b2, b3 = st.columns(3)
         display_dob = res["dob"]
         try:
@@ -114,10 +198,12 @@ else:
         b1.text_input("Date of Birth", display_dob, disabled=True)
         b2.text_input("Place of Birth", res["birth_place"], disabled=True)
         b3.text_input("Household Number / ID", res["household_no"], disabled=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.subheader("Address & Community Ties")
+        st.markdown('<div class="section-title"> Birth & Address & Community Ties</div>', unsafe_allow_html=True)
         st.text_input("Purok / Sitio Zone", res["purok"] if res["purok"] else "Unassigned", disabled=True)
         st.text_area("Complete Address", res["address"], disabled=True)
+        st.markdown("</div>", unsafe_allow_html=True)
         
         a1, a2, a3 = st.columns(3)
         a1.text_input("Duration of Residence", res["duration_residence"], disabled=True)
@@ -160,6 +246,8 @@ else:
             default_date = date(2000, 1, 1)
 
         with st.form("edit_form"):
+            st.markdown('<div class="section-card">', unsafe_allow_html=True)
+
             st.subheader("Personal Information")
             n1, n2, n3 = st.columns(3)
             eln = n1.text_input("Surname", res["surname"])
@@ -170,11 +258,19 @@ else:
             esex = c1.selectbox("Sex", SEX_OPTS, index=SEX_OPTS.index(res["sex"]) if res["sex"] in SEX_OPTS else 0)
             eciv = c2.selectbox("Civil Status", CIVIL_OPTS, index=CIVIL_OPTS.index(res["civil_status"]) if res["civil_status"] in CIVIL_OPTS else 0)
 
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="section-card">', unsafe_allow_html=True)
+
             st.subheader("Birth & Family Structure")
             b1, b2, b3 = st.columns(3)
             edob_date = b1.date_input("Date of Birth", value=default_date, min_value=date(1900, 1, 1), max_value=date.today())
             ebp = b2.text_input("Place of Birth", res["birth_place"])
             ehh = b3.text_input("Household Number / ID", res["household_no"])
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="section-card">', unsafe_allow_html=True)
 
             st.subheader("Address & Community Ties")
             ecit = st.text_input("Citizenship", res["citizenship"])
@@ -188,6 +284,9 @@ else:
             
             eres_st = a3.selectbox("Residency Status", STATUS_OPTS, index=STATUS_OPTS.index(res["residency_status"]) if res["residency_status"] in STATUS_OPTS else 0)
             eocc = st.text_input("Occupation", res["occupation"])
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+
             
             st.write("---")
             btn1, btn2 = st.columns(2)

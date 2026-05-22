@@ -2,7 +2,78 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 
+st.markdown("""
+<style>
+
+/* Background */
+.stApp {
+    background-color: #f4f8fc;
+}
+
+/* Title */
+h1 {
+    color: #1E3A5F;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Search + dropdown */
+.stTextInput input,
+.stSelectbox div[data-baseweb="select"] {
+    border-radius: 10px;
+}
+
+/* Row header */
+.header-row {
+    background-color: #1E3A5F;
+    padding: 12px 15px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Resident rows */
+.resident-row {
+    background-color: white;
+    padding: 12px 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.05);
+    border-left: 5px solid #1E3A5F;
+}
+
+/* Buttons */
+.stButton button {
+    background-color: #1E3A5F;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+}
+
+.stButton button:hover {
+    background-color: #27496d;
+    color: white;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.title("Home - Resident Directory")
+st.markdown(f"""
+<div style="
+background: linear-gradient(90deg, #163B65, #245082);
+padding: 25px;
+border-radius: 22px;
+color: white;
+margin-bottom: 20px;
+">
+    <h2 style="margin:0;">Welcome back, {st.session_state.username} 👋</h2>
+    <p style="margin-top:5px;">
+        Manage resident records and community data efficiently.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 c1, c2 = st.columns(2)
 search = c1.text_input("Search Name (First, Middle, or Surname)")
@@ -40,10 +111,52 @@ with sqlite3.connect("Residents.db") as conn:
         
     df = pd.read_sql_query(query, conn, params=params)
 
+    total_residents = len(df)
+male_count = len(df[df["sex"] == "Male"])
+female_count = len(df[df["sex"] == "Female"])
+archived_count = len(df[df["residency_status"] == "Archived"])
+
+m1, m2, m3, m4 = st.columns(4)
+
+with m1:
+    st.markdown(f"""
+    <div class="metric-card">
+        <h3> {total_residents}</h3>
+        <p>Total Residents</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with m2:
+    st.markdown(f"""
+    <div class="metric-card">
+        <h3> {male_count}</h3>
+        <p>Male Residents</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with m3:
+    st.markdown(f"""
+    <div class="metric-card">
+        <h3> {female_count}</h3>
+        <p>Female Residents</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with m4:
+    st.markdown(f"""
+    <div class="metric-card">
+        <h3> {archived_count}</h3>
+        <p>Archived</p>
+    </div>
+    """, unsafe_allow_html=True)
+
 st.markdown("---")
 
 # Header
+st.markdown('<div class="header-row">Resident Directory Records</div>', unsafe_allow_html=True)
+
 col_n, col_s, col_a, col_st, col_b = st.columns([3, 1, 1, 2, 1.5])
+
 col_n.markdown("**Full Name**")
 col_s.markdown("**Sex**")
 col_a.markdown("**Age**")
@@ -52,6 +165,8 @@ col_b.markdown("**Action**")
 
 for _, row in df.iterrows():
     col_n, col_s, col_a, col_st, col_b = st.columns([3, 1, 1, 2, 1.5])
+
+    st.markdown('<div class="resident-row">', unsafe_allow_html=True)
     
     # Visual cues for archived entries (Display)
     is_rec_archived = (row['residency_status'] == 'Archived')
@@ -64,6 +179,8 @@ for _, row in df.iterrows():
     col_s.write(row["sex"] if row["sex"] else "N/A")
     col_a.write(str(row["age"]) if row["age"] is not None else "0")
     col_st.write(row["residency_status"] if row["residency_status"] else "Resident")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
     
     if col_b.button("View Profile", key=f"v_{row['id']}", use_container_width=True):
         st.session_state.selected_resident_id = int(row["id"])

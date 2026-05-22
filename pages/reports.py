@@ -3,6 +3,117 @@ import pandas as pd
 import sqlite3
 import matplotlib.pyplot as plt
 
+st.markdown("""
+<style>
+
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* WHOLE APP */
+.stApp{
+    background-color: #f4f8fd;
+    font-family: sans-serif;
+}
+
+/* REMOVE TOP SPACE */
+.block-container{
+    padding-top: 2rem;
+}
+
+/* TITLES */
+h1{
+    color: #163B65;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 42px;
+}
+
+h2, h3{
+    color: #163B65;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+/* SUBTEXT */
+p, label, div{
+    font-family: sans-serif;
+}
+
+/* METRIC CARDS */
+[data-testid="metric-container"]{
+    background: white;
+    border-radius: 22px;
+    padding: 20px;
+    border: 1px solid #dbe7f3;
+    box-shadow: 0px 4px 18px rgba(0,0,0,0.06);
+}
+
+/* METRIC LABEL */
+[data-testid="metric-container"] label{
+    color: #5c6b7a;
+    font-size: 14px;
+}
+
+/* METRIC VALUE */
+[data-testid="metric-container"] [data-testid="stMetricValue"]{
+    color: #163B65;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+}
+
+/* CHART CONTAINERS */
+.element-container:has(canvas){
+    background: white;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0px 4px 18px rgba(0,0,0,0.06);
+    border: 1px solid #dbe7f3;
+    margin-bottom: 20px;
+}
+
+/* DATAFRAME */
+[data-testid="stDataFrame"]{
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #dbe7f3;
+    box-shadow: 0px 4px 18px rgba(0,0,0,0.05);
+    padding: 8px;
+}
+
+/* SELECTBOX */
+.stSelectbox > div > div{
+    border-radius: 12px;
+}
+
+/* DOWNLOAD BUTTON */
+.stDownloadButton button{
+    background-color: #163B65;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.stDownloadButton button:hover{
+    background-color: #245082;
+    color: white;
+}
+
+/* HORIZONTAL LINE */
+hr{
+    border: none;
+    height: 1px;
+    background-color: #dce6f2;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 #A working sample from google Ai, placeholder for now, need that sample report Diaz -PixelatedCorn
 st.title("📊 Barangay Analytics & Reports Dashboard")
 st.markdown("Real-time demographic breakdowns and reporting metrics for local planning.")
@@ -26,7 +137,7 @@ else:
     m3.metric("👶🏽 Minors (<18)", f"{num_minors} pax")
     m4.metric("🗳️ Potential Voters", f"{num_voters} pax")
 
-    st.markdown("---")
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # Dynamic Population Density Chart
     st.subheader("🏘️ Population Density by Purok / Sitio Zone")
