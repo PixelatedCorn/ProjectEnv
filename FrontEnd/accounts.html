@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Tracker - Accounts</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class='bx bx-cube-alt logo-icon'></i>
+                <span class="nav-label-main">Navigation</span>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item"><i class='bx bx-home-alt-2'></i> Home</a>
+                <a href="add-resident.html" class="menu-item"><i class='bx bx-plus-circle'></i> ADD</a>
+                <a href="#" class="menu-item"><i class='bx bx-file'></i> Report Related</a>
+                <a href="accounts.html" class="menu-item active"><i class='bx bx-user-account'></i> Accounts</a>
+                <a href="#" class="menu-item"><i class='bx bx-cog'></i> Settings</a>
+                <a href="#" class="menu-item"><i class='bx bx-help-circle'></i> Help</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html" class="menu-item logout-btn"><i class='bx bx-log-out'></i> Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h2>Account Handling (Admin)</h2>
+                <div class="user-badge">System Administrator</div>
+            </header>
+            
+            <div class="content-body">
+                <div class="table-toolbar">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search name...">
+                        <button class="btn-search"><i class='bx bx-search'></i> Search</button>
+                    </div>
+                    <a href="add-account.html" class="btn-add-account"><i class='bx bx-user-plus'></i> Add</a>
+                </div>
+
+                <div class="table-container model-small-width">
+                    <table class="resident-table">
+                        <thead>
+                            <tr>
+                                <th>Account name</th>
+                                <th>Access Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>admin_keith</td>
+                                <td><span class="badge badge-admin">Admin</span></td>
+                            </tr>
+                            <tr>
+                                <td>editor_lloyd</td>
+                                <td><span class="badge badge-editor">Editor</span></td>
+                            </tr>
+                            <tr>
+                                <td>viewer_staff</td>
+                                <td><span class="badge badge-viewer">Viewer</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+</html>
