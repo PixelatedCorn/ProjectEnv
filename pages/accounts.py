@@ -1,70 +1,9 @@
 import streamlit as st
 import pandas as pd
 import sqlite3
+from frontend import apply_style
 
-st.markdown("""
-<style>
-
-/* Page Title */
-.page-title{
-    font-size: 34px;
-    font-weight: 700;
-    color: #1E3A5F;
-    margin-bottom: 25px;
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Input Fields */
-.stTextInput input{
-    border-radius: 12px;
-    border: 1px solid #cfd9e6;
-    padding: 10px;
-    background-color: white;
-}
-
-/* Buttons */
-.stButton button{
-    background-color: #1E3A5F;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    padding: 10px;
-    transition: 0.2s;
-}
-
-.stButton button:hover{
-    background-color: #27496d;
-    color: white;
-}
-
-/* Dataframe */
-[data-testid="stDataFrame"]{
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid #dce6f2;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.05);
-    background: white;
-    padding: 5px;
-}
-
-/* Main background */
-.stApp{
-    background-color: #f5f9ff;
-}
-
-/* Labels */
-label, p, div{
-    font-family: sans-serif;
-}
-
-/* Headings */
-h1, h2, h3{
-    font-family: 'Poppins', sans-serif;
-}
-
-</style>
-""", unsafe_allow_html=True)
+apply_style("accounts")
 
 st.title("Account Management Workspace")
 

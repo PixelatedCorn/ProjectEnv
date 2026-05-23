@@ -1,63 +1,9 @@
 import streamlit as st
 import pandas as pd
 import sqlite3
+from frontend import apply_style
 
-st.markdown("""
-<style>
-
-/* Background */
-.stApp {
-    background-color: #f4f8fc;
-}
-
-/* Title */
-h1 {
-    color: #1E3A5F;
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Search + dropdown */
-.stTextInput input,
-.stSelectbox div[data-baseweb="select"] {
-    border-radius: 10px;
-}
-
-/* Row header */
-.header-row {
-    background-color: #1E3A5F;
-    padding: 12px 15px;
-    border-radius: 12px;
-    color: white;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-/* Resident rows */
-.resident-row {
-    background-color: white;
-    padding: 12px 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0px 2px 8px rgba(0,0,0,0.05);
-    border-left: 5px solid #1E3A5F;
-}
-
-/* Buttons */
-.stButton button {
-    background-color: #1E3A5F;
-    color: white;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-}
-
-.stButton button:hover {
-    background-color: #27496d;
-    color: white;
-}
-
-</style>
-""", unsafe_allow_html=True)
+apply_style("home")
 
 st.title("Home - Resident Directory")
 st.markdown(f"""

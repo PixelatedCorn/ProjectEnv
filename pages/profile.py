@@ -1,64 +1,9 @@
 import streamlit as st
 import sqlite3
 from datetime import datetime, date
+from frontend import apply_style
 
-st.markdown("""
-<style>
-
-/* Background */
-.stApp {
-    background-color: #f4f8fc;
-}
-
-/* Titles */
-h1, h2, h3 {
-    color: #1E3A5F;
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Section Containers */
-.section-card {
-    background-color: white;
-    padding: 25px;
-    border-radius: 18px;
-    margin-bottom: 20px;
-    box-shadow: 0px 3px 12px rgba(0,0,0,0.05);
-    border-left: 5px solid #1E3A5F;
-}
-
-/* Inputs */
-.stTextInput input,
-.stTextArea textarea,
-.stDateInput input,
-.stSelectbox div[data-baseweb="select"] {
-    border-radius: 10px;
-}
-
-/* Buttons */
-.stButton button,
-.stDownloadButton button,
-.stFormSubmitButton button {
-    background-color: #1E3A5F;
-    color: white;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-}
-
-.stButton button:hover,
-.stDownloadButton button:hover,
-.stFormSubmitButton button:hover {
-    background-color: #27496d;
-    color: white;
-}
-
-/* Alerts */
-.stAlert {
-    border-radius: 12px;
-}
-
-</style>
-""", unsafe_allow_html=True)
+apply_style("profile")
 
 if "selected_resident_id" not in st.session_state:
     st.session_state.selected_resident_id = None
@@ -107,6 +52,8 @@ if mode == "Add":
         occ = st.text_input("Occupation")
         
         st.write("---")
+        if st.form_submit_button("Cancel", use_container_width=True):
+            st.switch_page(st.session_state.home_route)
         if st.form_submit_button("Save New Resident Record", use_container_width=True):
             computed_age = calculate_age(dob_date)
             dob_str = dob_date.strftime("%Y-%m-%d")
@@ -290,7 +237,10 @@ else:
             
             st.write("---")
             btn1, btn2 = st.columns(2)
-            if btn1.form_submit_button("Save Structural Changes", use_container_width=True):
+            if btn1.form_submit_button("Cancel", use_container_width=True):
+                st.session_state.sub_page = "View"
+                st.rerun()
+            if btn2.form_submit_button("Save Structural Changes", use_container_width=True):
                 updated_age = calculate_age(edob_date)
                 edob_str = edob_date.strftime("%Y-%m-%d")
                 active_editor = st.session_state.username
@@ -307,6 +257,3 @@ else:
                 st.success("Changes saved successfully!")
                 st.session_state.sub_page = "View"
                 st.switch_page(st.session_state.home_route)
-            if btn2.form_submit_button("Cancel", use_container_width=True):
-                st.session_state.sub_page = "View"
-                st.rerun()
