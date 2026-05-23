@@ -6,10 +6,9 @@ def apply_style(page_name):
     Call this on any page by passing the respective page identifier string.
     """
     
-    # ---------------------------------------------------------
-    # 1. STYLE SHEET DICTIONARY MAP
-    # ---------------------------------------------------------
+    # 1. STYLE SHEET REPOSITORY, Dito nakalagay lahat ng CSS stylesheets para sa bawat page, organized by page name keys, wrok here now - PixelatedCorn
     sheets = {
+        #For Login Page
         "login": """
         <style>
         @import url('https://googleapis.com');
@@ -106,6 +105,7 @@ def apply_style(page_name):
         </style>
         """,
         
+        # for Home Page
         "home": """
         <style>
         .stApp { 
@@ -154,7 +154,8 @@ def apply_style(page_name):
 
         </style>
         """,
-        
+
+        #for Profile Page
         "profile": """
         <style>
         .stApp { background-color: #f4f8fc; }
@@ -222,6 +223,7 @@ def apply_style(page_name):
         </style>
         """,
         
+        #for Accounts Page
         "accounts": """
         <style>
 
@@ -274,7 +276,8 @@ def apply_style(page_name):
         h1, h2, h3 { font-family: 'Poppins', sans-serif; }
         </style>
         """,
-        
+
+        #for Reports Page
         "reports": """
         <style>
         @import url('https://googleapis.com');
@@ -310,7 +313,8 @@ def apply_style(page_name):
         border-radius: 22px; 
         padding: 20px; 
         border: 1px solid #dbe7f3; 
-        box-shadow: 0px 4px 18px rgba(0,0,0,0.06); }
+        box-shadow: 0px 4px 18px rgba(0,0,0,0.06); 
+        }
 
         [data-testid="metric-container"] label { 
         color: #5c6b7a; 
@@ -372,8 +376,5 @@ def apply_style(page_name):
         """
     }
 
-    # --------------------------------------------------------
-    # 2. RUN INJECTION SAFELY
-    # ---------------------------------------------------------
     if page_name in sheets:
         st.markdown(sheets[page_name], unsafe_allow_html=True)
