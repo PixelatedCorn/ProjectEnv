@@ -28,7 +28,7 @@ else:
     m1.metric("👥 Active Population", f"{total_active} pax")
     m2.metric("👵🏽👴🏽 Senior Citizens", f"{num_seniors} pax")
     m3.metric("👶🏽 Minors (<18)", f"{num_minors} pax")
-    m4.metric("🗳️ Potential Voters", f"{num_voters} pax")
+    m4.metric("🗳️ Potential Voters",    f"{num_voters} pax")
 
     st.markdown("<br>", unsafe_allow_html=True)
 

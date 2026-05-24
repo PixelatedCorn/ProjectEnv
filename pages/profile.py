@@ -8,6 +8,9 @@ apply_style("profile")
 if "selected_resident_id" not in st.session_state:
     st.session_state.selected_resident_id = None
 
+if "sub_page" not in st.session_state:
+    st.session_state.sub_page = "Add"
+
 mode = st.session_state.sub_page
 
 SEX_OPTS = ["Male", "Female"]
@@ -19,6 +22,64 @@ def calculate_age(birth_date):
     today = date.today()
     age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
     return max(0, age)
+
+def validate_resident_fields(ln, fn, mn, dob_date, bp, hh, cit, addr, dur, occ):
+    errors = []
+
+    # Name fields
+    if not ln.strip():
+        errors.append("Surname is required.")
+    elif not ln.strip().replace(" ", "").replace("-", "").isalpha():
+        errors.append("Surname must contain letters only.")
+
+    if not fn.strip():
+        errors.append("First Name is required.")
+    elif not fn.strip().replace(" ", "").replace("-", "").isalpha():
+        errors.append("First Name must contain letters only.")
+
+    if not mn.strip():
+        errors.append("Middle Name is required.")
+    elif not mn.strip().replace(" ", "").replace("-", "").isalpha():
+        errors.append("Middle Name must contain letters only.")
+
+    # Date of Birth
+    computed_age = calculate_age(dob_date)
+    if dob_date >= date.today():
+        errors.append("Date of Birth must be a past date.")
+    elif computed_age > 130:
+        errors.append("Date of Birth is unrealistically far in the past.")
+
+    # Place of Birth
+    if not bp.strip():
+        errors.append("Place of Birth is required.")
+
+    # Household Number
+        # Household Number
+    if not hh.strip():
+        errors.append("Household Number / ID is required.")
+
+    # Citizenship
+    if not cit.strip():
+        errors.append("Citizenship is required.")
+    elif not cit.strip().replace(" ", "").isalpha():
+        errors.append("Citizenship must contain letters only.")
+
+    # Address
+    if not addr.strip():
+        errors.append("Complete Address is required.")
+    elif len(addr.strip()) < 10:
+        errors.append("Address is too short. Please provide a complete address.")
+
+    # Duration of Residence
+    if not dur.strip():
+        errors.append("Duration of Residence is required (e.g., 5 Years).")
+
+    # Occupation
+    if not occ.strip():
+        errors.append("Occupation is required.")
+
+    return errors
+
 
 # --- ADD RESIDENT ---
 if mode == "Add":
@@ -55,22 +116,29 @@ if mode == "Add":
         if st.form_submit_button("Cancel", use_container_width=True):
             st.switch_page(st.session_state.home_route)
         if st.form_submit_button("Save New Resident Record", use_container_width=True):
-            computed_age = calculate_age(dob_date)
-            dob_str = dob_date.strftime("%Y-%m-%d")
-            # Pull currently logged-in account name for accountability tracking
-            active_editor = st.session_state.username
-            
-            with sqlite3.connect("Residents.db") as conn:
-                conn.execute("""
-                    INSERT INTO residents (
-                        surname, first_name, middle_name, dob, birth_place, household_no,
-                        sex, contact_info, address, duration_residence, residency_status, 
-                        civil_status, citizenship, occupation, age, purok, last_modified_by
-                    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                """, (ln, fn, mn, dob_str, bp, hh, sex, '', addr, dur, res_st, civ, cit, occ, computed_age, purok, active_editor))
-                conn.commit()
-            st.success("Profile saved successfully!")
-            st.switch_page(st.session_state.home_route)
+            errors = validate_resident_fields(ln, fn, mn, dob_date, bp, hh, cit, addr, dur, occ)
+
+            if errors:
+                for err in errors:
+                    st.error(f"⚠️ {err}")
+            else:
+                computed_age = calculate_age(dob_date)
+                dob_str = dob_date.strftime("%Y-%m-%d")
+                active_editor = st.session_state.username
+                
+                with sqlite3.connect("Residents.db") as conn:
+                    conn.execute("""
+                        INSERT INTO residents (
+                            surname, first_name, middle_name, dob, birth_place, household_no,
+                            sex, contact_info, address, duration_residence, residency_status, 
+                            civil_status, citizenship, occupation, age, purok, last_modified_by
+                        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    """, (ln.strip(), fn.strip(), mn.strip(), dob_str, bp.strip(), hh.strip(), 
+                          sex, '', addr.strip(), dur.strip(), res_st, civ, cit.strip(), 
+                          occ.strip(), computed_age, purok, active_editor))
+                    conn.commit()
+                st.success("✅ Profile saved successfully!")
+                st.switch_page(st.session_state.home_route)
 
 # --- VIEW & EDIT MODES ---
 else:
@@ -108,7 +176,6 @@ else:
         
         st.title(f"Resident Profile: {res['surname']}, {res['first_name']}")
         
-        # --- TRACKER LOG VISIBLE DISPLAY ---
         modifier = res["last_modified_by"] if res["last_modified_by"] else "Unknown User"
         st.caption(f"✍🏽 **System Audit Trail:** This record was last modified or registered by user account: `{modifier}`")
         
@@ -237,6 +304,7 @@ else:
             
             st.write("---")
             btn1, btn2 = st.columns(2)
+<<<<<<< HEAD
             if btn1.form_submit_button("Cancel", use_container_width=True):
                 st.session_state.sub_page = "View"
                 st.rerun()
@@ -257,3 +325,34 @@ else:
                 st.success("Changes saved successfully!")
                 st.session_state.sub_page = "View"
                 st.switch_page(st.session_state.home_route)
+=======
+            if btn1.form_submit_button("Save Structural Changes", use_container_width=True):
+                errors = validate_resident_fields(eln, efn, emn, edob_date, ebp, ehh, ecit, eaddr, edur, eocc)
+
+                if errors:
+                    for err in errors:
+                        st.error(f"⚠️ {err}")
+                else:
+                    updated_age = calculate_age(edob_date)
+                    edob_str = edob_date.strftime("%Y-%m-%d")
+                    active_editor = st.session_state.username
+                    
+                    with sqlite3.connect("Residents.db") as conn:
+                        conn.execute("""
+                            UPDATE residents SET 
+                                surname=?, first_name=?, middle_name=?, dob=?, birth_place=?, household_no=?,
+                                sex=?, address=?, duration_residence=?, residency_status=?, civil_status=?, 
+                                citizenship=?, occupation=?, age=?, purok=?, last_modified_by=?
+                            WHERE id=?
+                        """, (eln.strip(), efn.strip(), emn.strip(), edob_str, ebp.strip(), ehh.strip(), 
+                              esex, eaddr.strip(), edur.strip(), eres_st, eciv, ecit.strip(), 
+                              eocc.strip(), updated_age, epurok, active_editor, rid))
+                        conn.commit()
+                    st.success("✅ Changes saved successfully!")
+                    st.session_state.sub_page = "View"
+                    st.switch_page(st.session_state.home_route)
+
+            if btn2.form_submit_button("Cancel", use_container_width=True):
+                st.session_state.sub_page = "View"
+                st.rerun()
+>>>>>>> fbfcd85 (Validation)

@@ -28,23 +28,19 @@ sort = c2.selectbox(
     ["None", "Alphabetical", "Age", "Sex (Male Only)", "Sex (Female Only)"]
 )
 
-# Default filter state for archived records (default)
 show_archived = st.checkbox("Include Archived Records", value=False, help="Check this to include hidden or inactive records in your lookup pool.")
 
 with sqlite3.connect("Residents.db") as conn:
     query = "SELECT *, (surname || ', ' || first_name || ' ' || middle_name) as full_name FROM residents WHERE 1=1"
     params = []
     
-    # Default filtering behavior for archived individuals
     if not show_archived:
         query += " AND residency_status != 'Archived'"
         
-    # Search processing
     if search:
         query += " AND (surname LIKE ? OR first_name LIKE ? OR middle_name LIKE ?)"
         params.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
         
-    # Sorting
     if sort == "Sex (Male Only)":
         query += " AND sex = 'Male'"
     elif sort == "Sex (Female Only)":
@@ -98,9 +94,32 @@ with m4:
 
 st.markdown("---")
 
+<<<<<<< HEAD
 # Header
 st.markdown('<div class="header-row">Resident Directory Records</div>', unsafe_allow_html=True)
 
+=======
+# Pagination
+ROWS_PER_PAGE = 10
+total_rows = len(df)
+total_pages = max(1, -(-total_rows // ROWS_PER_PAGE))  # Ceiling division
+
+# Reset page if search/filter changes
+filter_state = (search, sort, show_archived)
+if "last_filter_state" not in st.session_state or st.session_state.last_filter_state != filter_state:
+    st.session_state.current_page = 1
+    st.session_state.last_filter_state = filter_state
+
+if "current_page" not in st.session_state:
+    st.session_state.current_page = 1
+
+current_page = st.session_state.current_page
+start_idx = (current_page - 1) * ROWS_PER_PAGE
+end_idx = start_idx + ROWS_PER_PAGE
+page_df = df.iloc[start_idx:end_idx]
+
+# --- Header ---
+>>>>>>> fbfcd85 (Validation)
 col_n, col_s, col_a, col_st, col_b = st.columns([3, 1, 1, 2, 1.5])
 
 col_n.markdown("**Full Name**")
@@ -109,12 +128,11 @@ col_a.markdown("**Age**")
 col_st.markdown("**Residency Status**")
 col_b.markdown("**Action**")
 
-for _, row in df.iterrows():
+for _, row in page_df.iterrows():
     col_n, col_s, col_a, col_st, col_b = st.columns([3, 1, 1, 2, 1.5])
 
     st.markdown('<div class="resident-row">', unsafe_allow_html=True)
     
-    # Visual cues for archived entries (Display)
     is_rec_archived = (row['residency_status'] == 'Archived')
     display_name = f"{row['surname']}, {row['first_name']} {row['middle_name']}"
     
@@ -132,3 +150,23 @@ for _, row in df.iterrows():
         st.session_state.selected_resident_id = int(row["id"])
         st.session_state.sub_page = "View"
         st.switch_page(st.session_state.profile_route)
+
+# --- Pagination Controls ---
+st.markdown("---")
+p_left, p_mid, p_right = st.columns([1, 2, 1])
+
+with p_left:
+    if st.button("← Previous", disabled=(current_page == 1), use_container_width=True):
+        st.session_state.current_page -= 1
+        st.rerun()
+
+with p_mid:
+    st.markdown(
+        f"<div style='text-align:center; padding-top: 6px;'>Page <b>{current_page}</b> of <b>{total_pages}</b> &nbsp;|&nbsp; {total_rows} record(s)</div>",
+        unsafe_allow_html=True
+    )
+
+with p_right:
+    if st.button("Next →", disabled=(current_page == total_pages), use_container_width=True):
+        st.session_state.current_page += 1
+        st.rerun()

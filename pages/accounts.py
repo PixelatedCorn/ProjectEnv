@@ -118,25 +118,69 @@ with tab2:
     st.markdown("Fill out the following fields to provision new administrative credentials.")
     
     with st.form("new_acc_form", clear_on_submit=True):
-        fn = st.text_input("Full Name (e.g., Jane Doe)")
-        sx = st.selectbox("Sex Orientation", ["Male", "Female"])
+        c1, c2, c3 = st.columns(3)
+        fn = c1.text_input("First Name")
+        mn = c2.text_input("Middle Name")
+        ln = c3.text_input("Last Name")
+        
+        sx = st.selectbox("Sex", ["Male", "Female"])
         un = st.text_input("Username Access ID")
         pw = st.text_input("Password String", type="password")
+        cpw = st.text_input("Confirm Password", type="password")
         al = st.selectbox("Access Level Permission Group", ROLE_OPTS, index=2)
         
         st.write("---")
         if st.form_submit_button("Register System User Profile", use_container_width=True):
-            if not fn or not un or not pw:
-                st.error("Validation Error: All text data input fields are mandatory.")
+            errors = []
+
+            # Name validations
+            if not fn.strip():
+                errors.append("First Name is required.")
+            elif not fn.strip().replace(" ", "").isalpha():
+                errors.append("First Name must contain letters only.")
+
+            if not mn.strip():
+                errors.append("Middle Name is required.")
+            elif not mn.strip().replace(" ", "").isalpha():
+                errors.append("Middle Name must contain letters only.")
+
+            if not ln.strip():
+                errors.append("Last Name is required.")
+            elif not ln.strip().replace(" ", "").isalpha():
+                errors.append("Last Name must contain letters only.")
+
+            # Username validation
+            if not un.strip():
+                errors.append("Username is required.")
+            elif len(un.strip()) < 4:
+                errors.append("Username must be at least 4 characters long.")
+            elif " " in un:
+                errors.append("Username must not contain spaces.")
+
+            # Password validation
+            if not pw:
+                errors.append("Password is required.")
+            elif len(pw) < 6:
+                errors.append("Password must be at least 6 characters long.")
+            elif pw != cpw:
+                errors.append("Passwords do not match.")
+
+            if not cpw:
+                errors.append("Please confirm your password.")
+
+            if errors:
+                for err in errors:
+                    st.error(f"⚠️ {err}")
             else:
+                full_name = f"{fn.strip()} {mn.strip()} {ln.strip()}"
                 try:
                     with sqlite3.connect("Users.db") as conn:
                         conn.execute(
                             "INSERT INTO users (fullname, sex, username, password, access_level) VALUES (?,?,?,?,?)",
-                            (fn, sx, un, pw, al)
+                            (full_name, sx, un.strip(), pw, al)
                         )
                         conn.commit()
-                    st.success(f"Success! Security profile created for `{un}` with `{al}` authorization rights.")
+                    st.success(f"✅ Profile created for `{un.strip()}` with `{al}` authorization rights.")
                     st.rerun()
                 except sqlite3.IntegrityError:
-                    st.error("Unique entry violation: Username already taken or registered in database directory.")
+                    st.error("⚠️ Username already taken or registered in the database directory.")
