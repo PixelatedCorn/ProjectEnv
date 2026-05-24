@@ -304,28 +304,6 @@ else:
             
             st.write("---")
             btn1, btn2 = st.columns(2)
-<<<<<<< HEAD
-            if btn1.form_submit_button("Cancel", use_container_width=True):
-                st.session_state.sub_page = "View"
-                st.rerun()
-            if btn2.form_submit_button("Save Structural Changes", use_container_width=True):
-                updated_age = calculate_age(edob_date)
-                edob_str = edob_date.strftime("%Y-%m-%d")
-                active_editor = st.session_state.username
-                
-                with sqlite3.connect("Residents.db") as conn:
-                    conn.execute("""
-                        UPDATE residents SET 
-                            surname=?, first_name=?, middle_name=?, dob=?, birth_place=?, household_no=?,
-                            sex=?, address=?, duration_residence=?, residency_status=?, civil_status=?, 
-                            citizenship=?, occupation=?, age=?, purok=?, last_modified_by=?
-                        WHERE id=?
-                    """, (eln, efn, emn, edob_str, ebp, ehh, esex, eaddr, edur, eres_st, eciv, ecit, eocc, updated_age, epurok, active_editor, rid))
-                    conn.commit()
-                st.success("Changes saved successfully!")
-                st.session_state.sub_page = "View"
-                st.switch_page(st.session_state.home_route)
-=======
             if btn1.form_submit_button("Save Structural Changes", use_container_width=True):
                 errors = validate_resident_fields(eln, efn, emn, edob_date, ebp, ehh, ecit, eaddr, edur, eocc)
 
@@ -355,4 +333,3 @@ else:
             if btn2.form_submit_button("Cancel", use_container_width=True):
                 st.session_state.sub_page = "View"
                 st.rerun()
->>>>>>> fbfcd85 (Validation)

@@ -21,15 +21,16 @@ margin-bottom: 20px;
 </div>
 """, unsafe_allow_html=True)
 
+# UI INPUTS
 c1, c2 = st.columns(2)
 search = c1.text_input("Search Name (First, Middle, or Surname)")
 sort = c2.selectbox(
     "Sort / Filter By", 
     ["None", "Alphabetical", "Age", "Sex (Male Only)", "Sex (Female Only)"]
 )
-
 show_archived = st.checkbox("Include Archived Records", value=False, help="Check this to include hidden or inactive records in your lookup pool.")
 
+# DATABASE QUERY
 with sqlite3.connect("Residents.db") as conn:
     query = "SELECT *, (surname || ', ' || first_name || ' ' || middle_name) as full_name FROM residents WHERE 1=1"
     params = []
@@ -53,7 +54,8 @@ with sqlite3.connect("Residents.db") as conn:
         
     df = pd.read_sql_query(query, conn, params=params)
 
-    total_residents = len(df)
+# METRICS
+total_residents = len(df)
 male_count = len(df[df["sex"] == "Male"])
 female_count = len(df[df["sex"] == "Female"])
 archived_count = len(df[df["residency_status"] == "Archived"])
@@ -63,7 +65,7 @@ m1, m2, m3, m4 = st.columns(4)
 with m1:
     st.markdown(f"""
     <div class="metric-card">
-        <h3> {total_residents}</h3>
+        <h3>{total_residents}</h3>
         <p>Total Residents</p>
     </div>
     """, unsafe_allow_html=True)
@@ -71,7 +73,7 @@ with m1:
 with m2:
     st.markdown(f"""
     <div class="metric-card">
-        <h3> {male_count}</h3>
+        <h3>{male_count}</h3>
         <p>Male Residents</p>
     </div>
     """, unsafe_allow_html=True)
@@ -79,7 +81,7 @@ with m2:
 with m3:
     st.markdown(f"""
     <div class="metric-card">
-        <h3> {female_count}</h3>
+        <h3>{female_count}</h3>
         <p>Female Residents</p>
     </div>
     """, unsafe_allow_html=True)
@@ -87,24 +89,21 @@ with m3:
 with m4:
     st.markdown(f"""
     <div class="metric-card">
-        <h3> {archived_count}</h3>
+        <h3>{archived_count}</h3>
         <p>Archived</p>
     </div>
     """, unsafe_allow_html=True)
 
 st.markdown("---")
 
-<<<<<<< HEAD
-# Header
+# HEADER
 st.markdown('<div class="header-row">Resident Directory Records</div>', unsafe_allow_html=True)
 
-=======
-# Pagination
+# PAGINATION
 ROWS_PER_PAGE = 10
 total_rows = len(df)
-total_pages = max(1, -(-total_rows // ROWS_PER_PAGE))  # Ceiling division
+total_pages = max(1, -(-total_rows // ROWS_PER_PAGE))
 
-# Reset page if search/filter changes
 filter_state = (search, sort, show_archived)
 if "last_filter_state" not in st.session_state or st.session_state.last_filter_state != filter_state:
     st.session_state.current_page = 1
@@ -118,21 +117,18 @@ start_idx = (current_page - 1) * ROWS_PER_PAGE
 end_idx = start_idx + ROWS_PER_PAGE
 page_df = df.iloc[start_idx:end_idx]
 
-# --- Header ---
->>>>>>> fbfcd85 (Validation)
+# TABLE HEADER
 col_n, col_s, col_a, col_st, col_b = st.columns([3, 1, 1, 2, 1.5])
-
 col_n.markdown("**Full Name**")
 col_s.markdown("**Sex**")
 col_a.markdown("**Age**")
 col_st.markdown("**Residency Status**")
 col_b.markdown("**Action**")
 
+# TABLE ROWS
 for _, row in page_df.iterrows():
     col_n, col_s, col_a, col_st, col_b = st.columns([3, 1, 1, 2, 1.5])
 
-    st.markdown('<div class="resident-row">', unsafe_allow_html=True)
-    
     is_rec_archived = (row['residency_status'] == 'Archived')
     display_name = f"{row['surname']}, {row['first_name']} {row['middle_name']}"
     
@@ -144,14 +140,12 @@ for _, row in page_df.iterrows():
     col_a.write(str(row["age"]) if row["age"] is not None else "0")
     col_st.write(row["residency_status"] if row["residency_status"] else "Resident")
     
-    st.markdown('</div>', unsafe_allow_html=True)
-    
     if col_b.button("View Profile", key=f"v_{row['id']}", use_container_width=True):
         st.session_state.selected_resident_id = int(row["id"])
         st.session_state.sub_page = "View"
         st.switch_page(st.session_state.profile_route)
 
-# --- Pagination Controls ---
+# PAGINATION CONTROLS
 st.markdown("---")
 p_left, p_mid, p_right = st.columns([1, 2, 1])
 
