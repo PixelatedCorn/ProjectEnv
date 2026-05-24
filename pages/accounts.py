@@ -117,7 +117,7 @@ with tab2:
     st.subheader("Create / Register New System Profile Account")
     st.markdown("Fill out the following fields to provision new administrative credentials.")
     
-    with st.form("new_acc_form", clear_on_submit=True):
+    with st.form("new_acc_form", clear_on_submit=False):
         c1, c2, c3 = st.columns(3)
         fn = c1.text_input("First Name")
         mn = c2.text_input("Middle Name")
