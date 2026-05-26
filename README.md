@@ -3,7 +3,7 @@
  ---
 
 ## Project Overview
-**Barangay Residents and Population Information System**  is a web-based application designed to modernize local government administration. It allows barangay officials and staff to record, manage, and securely retrieve resident profiles, while generating real-time population-related summaries and demographic reports. This digital system replaces manual, paper-based workflows to ensure faster data processing, higher data integrity, and organized community tracking. 
+**Barangay Residents and Population Tracker**  is a web-based application designed to modernize local government administration. It allows barangay officials and staff to record, manage, and securely retrieve resident profiles, while generating real-time population-related summaries and demographic reports. This digital system replaces manual, paper-based workflows to ensure faster data processing, higher data integrity, and organized community tracking. 
 
 
 ---
