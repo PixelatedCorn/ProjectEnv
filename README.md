@@ -108,16 +108,16 @@ Changes to any profile row trigger a non-destructible log writing the User ID, A
 
 *Personally Identifiable Information (PII)*
 The system will store PII such as:
-● Full Name
-● Date and Place of Birth and Household
-● Sex
-● Contact Information
-● Complete Address
-● Duration of Residence
-● Residency Status
-● Civil Status
-● Citizenship
-● Occupation
+- Full Name
+- Date and Place of Birth and Household
+- Sex
+- Contact Information
+- Complete Address
+- Duration of Residence
+- Residency Status
+- Civil Status
+- Citizenship
+- Occupation
 
 ## How to Use
 *Barangay Staff*
