@@ -131,16 +131,18 @@ Changes to any profile row trigger a non-destructible log writing the User ID, A
 - Backend Features
 - Project idea
 - Prototype
+- Bug Testing
 
 
 ### [**Diaz, Marcus**] (https://github.com/Marribel)
 - Backend Features
 - Project Idea
 - Prototype
+- Bug Testing
 
 ### [**Belen, James**] (https://github.com/jameszup)
 - Backend Features
-
+- Bug Testing
 
 *Front end*
 ### [**Nebrao, Faith**] (https://github.com/fey3)
