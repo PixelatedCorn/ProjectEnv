@@ -141,14 +141,18 @@ Changes to any profile row trigger a non-destructible log writing the User ID, A
 ### [**Belen, James**] (https://github.com/jameszup)
 - Backend Features
 
+
 *Front end*
 ### [**Nebrao, Faith**] (https://github.com/fey3)
 - Frontend UI
 
-### [*Erro, Keith**] (https://github.com/Kerro-orre)
-- Frontend UI
+
 
 *Documentation*
 ### [**Barcil, Angel**] (https://github.com/zyeayi)
+- Documentation
+- Bug Testing
+
+### [*Erro, Keith**] (https://github.com/Kerro-orre)
 - Documentation
 - Bug Testing
