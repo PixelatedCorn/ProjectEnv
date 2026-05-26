@@ -83,7 +83,7 @@ demographic breakdowns.
                                            v
 [Real-Time Analytics & Reports] <---- [Secure Database Store]
 
-
+```
 
 ## System Access Control
 
@@ -100,7 +100,7 @@ demographic breakdowns.
 ## Validation and Security Protocols
 
 *Mandatory Input fields*
-- All critical identifier inputs (Names, brhdates, addresses) mustt match specific regex rules before parsing to database files. Blank submissions are rejected automatically.
+- All critical identifier inputs (Names, birthdates, addresses) must match specific regex rules before parsing to database files. Blank submissions are rejected automatically.
 
 *Privacy Impact Assessment(PIA)*
 - Sensitive data points such as birthdates and specific address strings are hidden behind API token guardrails
