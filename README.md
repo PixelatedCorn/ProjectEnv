@@ -86,7 +86,7 @@ demographic breakdowns.
 ```
 
 ## System Access Control
-
+```text
     | Feature Modules        |  Admin Role |  Encoder Role |   Viewer Role  |
     |------------------------|-------------|---------------|----------------|
     | System Configurations  | Full Access |  No Access    |  No Access  |
