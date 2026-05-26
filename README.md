@@ -74,14 +74,16 @@ demographic breakdowns.
 
 ## System Integration Workflow
 
+```text
 [Physical / Digital Intake Form]
-              |
-              v
-   [Data Capture & Encoders] ----> [Input Validation Filters]
-                                              |
-                                              v
- [Real-Time Analytics & Reports] <---- [Secure Database Store]
+       |
+       v
+[Data Capture & Encoders] ----> [Input Validation Filters]
+                                           |
+                                           v
+[Real-Time Analytics & Reports] <---- [Secure Database Store]
 
+---
 
 ## System Access Control
 
@@ -133,7 +135,6 @@ Changes to any profile row trigger a non-destructible log writing the User ID, A
 - Prototype
 - Bug Testing
 
-
 ### [**Diaz, Marcus**] (https://github.com/Marribel)
 - Backend Features
 - Project Idea
@@ -144,11 +145,13 @@ Changes to any profile row trigger a non-destructible log writing the User ID, A
 - Backend Features
 - Bug Testing
 
+---
+
 *Front end*
 ### [**Nebrao, Faith**] (https://github.com/fey3)
 - Frontend UI
 
-
+---
 
 *Documentation*
 ### [**Barcil, Angel**] (https://github.com/zyeayi)
