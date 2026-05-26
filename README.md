@@ -95,7 +95,7 @@ demographic breakdowns.
     | Search / Filter Records| Full Access |  Full Access  |  Limited Acccess|
     | Export / Print Reports | Full Access |  Full Access  |  Limited Access |
 
-\\\
+```
 
 ## Validation and Security Protocols
 
