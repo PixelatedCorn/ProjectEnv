@@ -153,6 +153,6 @@ Changes to any profile row trigger a non-destructible log writing the User ID, A
 - Documentation
 - Bug Testing
 
-### [*Erro, Keith**] (https://github.com/Kerro-orre)
+### [**Erro, Keith**] (https://github.com/Kerro-orre)
 - Documentation
 - Bug Testing
