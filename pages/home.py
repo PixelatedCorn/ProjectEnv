@@ -5,19 +5,28 @@ from frontend import apply_style
 
 apply_style("home")
 
-st.title("Home - Resident Directory")
 st.markdown(f"""
-<div style="
+<div style='
 background: linear-gradient(90deg, #163B65, #245082);
-padding: 25px;
+padding: 20px;
 border-radius: 22px;
 color: white;
+margin-bottom: 25px;
+'>
+
+<div style='
+font-size: 50px;
+font-weight: 800;
 margin-bottom: 20px;
-">
-    <h2 style="margin:0;">Welcome back, {st.session_state.username} 👋</h2>
-    <p style="margin-top:5px;">
-        Manage resident records and community data efficiently.
-    </p>
+color: white;
+'>
+Home - Resident Directory
+</div>
+
+<h1 style='color:white; margin-bottom:20px;'>
+Welcome back, {st.session_state.username} 👋
+</h1>
+
 </div>
 """, unsafe_allow_html=True)
 
@@ -66,7 +75,7 @@ with m1:
     st.markdown(f"""
     <div class="metric-card">
         <h3>{total_residents}</h3>
-        <p>Total Residents</p>
+        <p><b>Total Residents<b></p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -74,7 +83,7 @@ with m2:
     st.markdown(f"""
     <div class="metric-card">
         <h3>{male_count}</h3>
-        <p>Male Residents</p>
+        <p><b>Male Residents<b></p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -82,7 +91,7 @@ with m3:
     st.markdown(f"""
     <div class="metric-card">
         <h3>{female_count}</h3>
-        <p>Female Residents</p>
+        <p><b>Female Residents<b></p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -90,7 +99,7 @@ with m4:
     st.markdown(f"""
     <div class="metric-card">
         <h3>{archived_count}</h3>
-        <p>Archived</p>
+        <p><b>Archived<b></p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -127,19 +136,32 @@ col_b.markdown("**Action**")
 
 # TABLE ROWS
 for _, row in page_df.iterrows():
+
+    st.markdown(
+        """
+        <div style="
+            border-bottom: 1px solid #8c8c8c;
+            padding: 2px 0px;
+            margin: 0;
+        ">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
     col_n, col_s, col_a, col_st, col_b = st.columns([3, 1, 1, 2, 1.5])
 
     is_rec_archived = (row['residency_status'] == 'Archived')
     display_name = f"{row['surname']}, {row['first_name']} {row['middle_name']}"
-    
+
     if is_rec_archived:
         display_name = f"📁 {display_name} *(Archived)*"
-        
+
     col_n.write(display_name if display_name.strip() not in ["", ",", "📁  *(Archived)*"] else "Unnamed Resident")
     col_s.write(row["sex"] if row["sex"] else "N/A")
     col_a.write(str(row["age"]) if row["age"] is not None else "0")
     col_st.write(row["residency_status"] if row["residency_status"] else "Resident")
-    
+
     if col_b.button("View Profile", key=f"v_{row['id']}", use_container_width=True):
         st.session_state.selected_resident_id = int(row["id"])
         st.session_state.sub_page = "View"

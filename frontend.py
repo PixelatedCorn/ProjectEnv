@@ -27,9 +27,9 @@ def apply_style(page_name):
 
         .main-title {
             text-align: center; 
-            font-size: 42px; 
-            font-weight: 700;
-            color: #1E3A5F; 
+            font-size: 70px; 
+            font-weight: 800;
+            color: #1E3A5F !important; 
             margin-bottom: 5px; 
             font-family: 'Poppins', sans-serif;
         }
@@ -41,19 +41,13 @@ def apply_style(page_name):
             font-size: 16px; 
         }
 
-        .login-card {
-            background: #1E3A5F; 
-            padding: 40px; 
-            border-radius: 20px;
-            box-shadow: 0px 5px 20px rgba(0,0,0,0.12); 
-            border: 1px solid #dce6f2;
-        }
-
         div[data-testid="stForm"] {
-            background-color: #1E3A5F; 
-            padding: 30px; 
-            border-radius: 20px;
-            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+            background-color: #1E3A5F;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.12);
+            max-width: 500px;
+            margin: auto;
         }
 
         div[data-testid="stForm"] label { 
@@ -74,15 +68,6 @@ def apply_style(page_name):
             font-weight: 600; 
         }
 
-        h3 { 
-        color: white; 
-        font-family: 'Poppins', sans-serif; 
-        }
-
-        .stCaption { 
-        color: #dbe7f5 !important; 
-        }
-
         .stButton button {
             background-color: #1E3A5F; 
             color: white; 
@@ -100,7 +85,7 @@ def apply_style(page_name):
 
         .footer-text { text-align: center; 
         color: #5c6b7a; 
-        margin-top: 30px; f
+        margin-top: 30px; 
         font-size: 13px; }
         </style>
         """,
@@ -117,39 +102,84 @@ def apply_style(page_name):
         'Poppins', sans-serif; 
         }
 
-        .stTextInput input, .stSelectbox div[data-baseweb="select"] { 
-        border-radius: 10px; 
+        /* TEXT INPUT + SELECTBOX LABELS ONLY */
+        .stTextInput label p,
+        .stSelectbox label p {
+            font-size: 20px !important;
+            font-weight: 800 !important;
+            color: #1E3A5F !important;
         }
+        label p {
+            font-weight: 800 !important;
+        }
+
 
         .header-row { 
-        background-color: #1E3A5F; 
-        padding: 12px 15px; 
-        border-radius: 12px; 
-        color: white; 
-        font-weight: 600; 
-        margin-bottom: 10px; 
+            background-color: #1E3A5F; 
+            padding: 14px 15px; 
+            border-radius: 12px 12px 0 0; 
+            color: white; 
+            font-weight: 600; 
+            border-bottom: 2px solid #dce6f2;
         }
 
-        .resident-row { 
-        background-color: white; 
-        padding: 12px 15px; 
-        border-radius: 12px; 
-        margin-bottom: 10px; 
-        box-shadow: 0px 2px 8px rgba(0,0,0,0.05); 
-        border-left: 5px solid #1E3A5F; 
+        div[data-testid="stHorizontalBlock"] {
+            align-items: center;
+            padding-top: 2px;
+            padding-bottom: 2px;
         }
 
         .stButton button { 
-        background-color: #1E3A5F; 
-        color: white; 
-        border-radius: 10px; 
-        border: none; 
-        font-weight: 600; 
+            background-color: #1E3A5F; 
+            color: white; 
+            border-radius: 10px; 
+            border: none; 
+            font-weight: 600; 
         }
 
         .stButton button:hover { 
-        background-color: #27496d; 
-        color: white; 
+            background-color: #27496d; 
+            color: white; 
+        }
+
+        /* REMOVE TOP SPACE */
+        .block-container {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+
+        /* OPTIONAL: bawasan pa */
+        div[data-testid="stAppViewContainer"] {
+            padding-top: 0rem !important;
+        }
+
+        /* INPUT CONTAINER */
+        .stTextInput div[data-baseweb="input"] {
+            border: 2px solid black !important;
+            border-radius: 12px !important;
+            background: transparent !important;
+            min-height: 55px !important;
+        }
+
+        /* SELECTBOX */
+        .stSelectbox div[data-baseweb="select"] {
+            border: 2px solid black !important;
+            border-radius: 12px !important;
+            background: transparent !important;
+            min-height: 55px !important;
+            align-items: center !important;
+        }
+
+        .stSelectbox input {
+            opacity: 0 !important;
+            position: absolute !important;
+        }
+
+        /* INPUT TEXT */
+        .stTextInput input {
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            background: transparent !important;
         }
 
         </style>
@@ -160,33 +190,52 @@ def apply_style(page_name):
         <style>
         .stApp { background-color: #f4f8fc; }
 
+        .info-section {
+        border-bottom: 1px solid #c7d3e0;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        }
+
         h1, h2, h3 { 
         color: #1E3A5F; 
         font-family: 'Poppins', 
         sans-serif; 
         }
 
-        .section-card { 
-        background-color: white; 
-        padding: 25px; 
-        border-radius: 18px; 
-        margin-bottom: 20px; 
-        box-shadow: 0px 3px 12px rgba(0,0,0,0.05); 
-        border-left: 5px solid #1E3A5F; 
-        }
-
         .stTextInput input, .stTextArea textarea, .stDateInput input, .stSelectbox div[data-baseweb="select"] { 
         border-radius: 10px; 
         }
 
-        .stButton button { 
-        background-color: #9500ff; 
-        color: white; 
-        border-radius: 10px; 
-        border: none; 
-        font-weight: 600; 
+        .stButton > button { 
+        background: linear-gradient(90deg, #163B65, #245082) !important;
+        color: white !important;
+        border-radius: 10px !important;
+        border: none !important;
+        font-weight: 600 !important;
+        }
+        .save-btn button {
+            background-color: #16a34a !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
         }
 
+        .save-btn button:hover {
+            background-color: #15803d !important;
+        }
+
+        .cancel-btn button {
+            background-color: #dc2626 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+        }
+
+        .cancel-btn button:hover {
+            background-color: #b91c1c !important;
+        }
         .stDownloadButton button { 
         background-color: #fa00af !important; 
         color: white !important; 
@@ -195,31 +244,16 @@ def apply_style(page_name):
         font-weight: 600 !important; 
         }
 
-        .st-key-btn1 button { 
-        background-color: #F44336; 
-        color: white; 
-        border-radius: 10px; 
-        border: none; 
-        font-weight: 600; 
-        }
-
-        .stFormSubmitButton button { 
-        background-color: #fa00af; 
-        color: white; 
-        border-radius: 10px; 
-        border: none; 
-        font-weight: 600; 
-        }
-
-        .stButton button:hover, .stDownloadButton button:hover, .stFormSubmitButton button:hover { 
-        background-color: #27496d; 
-        color: white; 
-        }
-
         .stAlert { 
         border-radius: 12px; 
         }
 
+        .section-title{
+        color:#163B65;
+        font-size:20px;
+        font-weight:700;
+        margin-bottom:15px;
+        }
         </style>
         """,
         

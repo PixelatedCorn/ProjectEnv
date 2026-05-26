@@ -54,7 +54,6 @@ def validate_resident_fields(ln, fn, mn, dob_date, bp, hh, cit, addr, dur, occ):
         errors.append("Place of Birth is required.")
 
     # Household Number
-        # Household Number
     if not hh.strip():
         errors.append("Household Number / ID is required.")
 
@@ -152,28 +151,6 @@ else:
         res = conn.execute("SELECT * FROM residents WHERE id=?", (rid,)).fetchone()
 
     if mode == "View":
-        st.markdown("""
-    <style>
-
-    .profile-card{
-        background: white;
-        padding: 25px;
-        border-radius: 18px;
-        border: 1px solid #dbe7f3;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        margin-bottom: 20px;
-    }
-
-    .section-title{
-        color: #163B65;
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 15px;
-    }
-
-    </style>
-    """, unsafe_allow_html=True)
-        
         st.title(f"Resident Profile: {res['surname']}, {res['first_name']}")
         
         modifier = res["last_modified_by"] if res["last_modified_by"] else "Unknown User"
@@ -188,8 +165,6 @@ else:
         if res["residency_status"] == "Archived":
             st.error("📂 **Status Alert:** This record is currently Archived.")
 
-        st.markdown('<div class="profile-card">', unsafe_allow_html=True)
-        
         st.markdown('<div class="section-title"> Personal Information</div>', unsafe_allow_html=True)
         n1, n2, n3 = st.columns(3)
         n1.text_input("Surname", res["surname"], disabled=True)
@@ -200,7 +175,6 @@ else:
         c1.text_input("Sex", res["sex"], disabled=True)
         c2.text_input("Age (Auto-Calculated)", str(resident_age), disabled=True)
         c3.text_input("Civil Status", res["civil_status"], disabled=True)
-        st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown('<div class="section-title"> Birth & Family Structure</div>', unsafe_allow_html=True)
         b1, b2, b3 = st.columns(3)
@@ -224,7 +198,15 @@ else:
         a2.text_input("Residency Status", res["residency_status"], disabled=True)
         a3.text_input("Occupation", res["occupation"], disabled=True)
         
-        st.write("---")
+        st.markdown("""
+        <hr style="
+        height:2px;
+        border:none;
+        background-color:#7f8ea3;
+        margin-top:25px;
+        margin-bottom:25px;
+        ">
+        """, unsafe_allow_html=True)
         cb, ce = st.columns(2)
         if cb.button("Back to Home Directory", use_container_width=True):
             st.switch_page(st.session_state.home_route)
@@ -234,7 +216,16 @@ else:
                 st.rerun()
 
         if st.session_state.access_level in ["Admin", "Editor"]:
-            st.write("---")
+            st.markdown("""
+        <hr style="
+        height:2px;
+        border:none;
+        background-color:#7f8ea3;
+        margin-top:25px;
+        margin-bottom:25px;
+        ">
+        """, unsafe_allow_html=True)
+            
             with st.expander("📂 Records Management (Archive Switch)", expanded=False):
                 active_editor = st.session_state.username
                 if res["residency_status"] == "Archived":
@@ -260,7 +251,6 @@ else:
             default_date = date(2000, 1, 1)
 
         with st.form("edit_form"):
-            st.markdown('<div class="section-card">', unsafe_allow_html=True)
 
             st.subheader("Personal Information")
             n1, n2, n3 = st.columns(3)
@@ -272,9 +262,6 @@ else:
             esex = c1.selectbox("Sex", SEX_OPTS, index=SEX_OPTS.index(res["sex"]) if res["sex"] in SEX_OPTS else 0)
             eciv = c2.selectbox("Civil Status", CIVIL_OPTS, index=CIVIL_OPTS.index(res["civil_status"]) if res["civil_status"] in CIVIL_OPTS else 0)
 
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="section-card">', unsafe_allow_html=True)
 
             st.subheader("Birth & Family Structure")
             b1, b2, b3 = st.columns(3)
@@ -282,10 +269,8 @@ else:
             ebp = b2.text_input("Place of Birth", res["birth_place"])
             ehh = b3.text_input("Household Number / ID", res["household_no"])
 
-            st.markdown('</div>', unsafe_allow_html=True)
 
-            st.markdown('<div class="section-card">', unsafe_allow_html=True)
-
+            st.markdown('<div class="info-section">', unsafe_allow_html=True)
             st.subheader("Address & Community Ties")
             ecit = st.text_input("Citizenship", res["citizenship"])
             eaddr = st.text_area("Complete Address", res["address"])
@@ -299,13 +284,36 @@ else:
             eres_st = a3.selectbox("Residency Status", STATUS_OPTS, index=STATUS_OPTS.index(res["residency_status"]) if res["residency_status"] in STATUS_OPTS else 0)
             eocc = st.text_input("Occupation", res["occupation"])
             
-            st.markdown('</div>', unsafe_allow_html=True)
-
+            st.markdown("""
+            <hr style="
+            height:2px;
+            border:none;
+            background-color:#7f8ea3;
+            margin-top:25px;
+            margin-bottom:25px;
+            ">
+            """, unsafe_allow_html=True)
             
-            st.write("---")
             btn1, btn2 = st.columns(2)
-            if btn1.form_submit_button("Save Structural Changes", use_container_width=True):
-                errors = validate_resident_fields(eln, efn, emn, edob_date, ebp, ehh, ecit, eaddr, edur, eocc)
+
+            save_btn = btn1.form_submit_button(
+                "Save Structural Changes",
+                use_container_width=True,
+                type="primary"
+            )
+            
+            cancel_btn = btn2.form_submit_button(
+                "Cancel",
+                use_container_width=True,
+                type="secondary"
+            )
+
+            if save_btn:
+                errors = validate_resident_fields(
+                    eln, efn, emn,
+                    edob_date, ebp, ehh,
+                    ecit, eaddr, edur, eocc
+                )
 
                 if errors:
                     for err in errors:
@@ -314,7 +322,7 @@ else:
                     updated_age = calculate_age(edob_date)
                     edob_str = edob_date.strftime("%Y-%m-%d")
                     active_editor = st.session_state.username
-                    
+
                     with sqlite3.connect("Residents.db") as conn:
                         conn.execute("""
                             UPDATE residents SET 
@@ -322,14 +330,21 @@ else:
                                 sex=?, address=?, duration_residence=?, residency_status=?, civil_status=?, 
                                 citizenship=?, occupation=?, age=?, purok=?, last_modified_by=?
                             WHERE id=?
-                        """, (eln.strip(), efn.strip(), emn.strip(), edob_str, ebp.strip(), ehh.strip(), 
-                              esex, eaddr.strip(), edur.strip(), eres_st, eciv, ecit.strip(), 
-                              eocc.strip(), updated_age, epurok, active_editor, rid))
+                        """, (
+                            eln.strip(), efn.strip(), emn.strip(),
+                            edob_str, ebp.strip(), ehh.strip(),
+                            esex, eaddr.strip(), edur.strip(),
+                            eres_st, eciv, ecit.strip(),
+                            eocc.strip(), updated_age,
+                            epurok, active_editor, rid
+                        ))
+
                         conn.commit()
+
                     st.success("✅ Changes saved successfully!")
                     st.session_state.sub_page = "View"
                     st.switch_page(st.session_state.home_route)
 
-            if btn2.form_submit_button("Cancel", use_container_width=True):
+            if cancel_btn:
                 st.session_state.sub_page = "View"
                 st.rerun()

@@ -88,17 +88,22 @@ if not st.session_state.logged_in:
         """,
         unsafe_allow_html=True
     )
-    st.markdown("<p class='main-title'>Barangay Residents Tracker</p>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>Barangay Residents Tracker</h1>", unsafe_allow_html=True)
     st.markdown("<p class='sub-title'>Please login to securely access municipal information systems.</p>", unsafe_allow_html=True)
 
     left, center, right = st.columns([1,1.2,1])
 
-    with center:
+    with st.form("login"):
 
-        st.markdown("### 🔐 Login")
-        st.caption("Enter your credentials to continue.")
+            st.markdown(
+                "<h3 style='color:white;'>🔐 Login</h3>",
+                unsafe_allow_html=True
+            )
 
-        with st.form("login"):
+            st.markdown(
+                "<p style='color:white; margin-top:-10px;'>Enter your credentials to continue.</p>",
+                unsafe_allow_html=True
+            )
 
             u = st.text_input("Username")
             p = st.text_input("Password", type="password")
@@ -121,15 +126,6 @@ if not st.session_state.logged_in:
 
                 else:
                     st.error("Invalid credentials")
-
-    st.markdown(
-        """
-        <div class='footer-text'>
-            Barangay Resident Management System • 2026
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
 else:
     st.markdown("""
