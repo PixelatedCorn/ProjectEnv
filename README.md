@@ -83,7 +83,7 @@ demographic breakdowns.
                                            v
 [Real-Time Analytics & Reports] <---- [Secure Database Store]
 
-**\`\`\`**
+
 
 ## System Access Control
 
@@ -95,6 +95,7 @@ demographic breakdowns.
     | Search / Filter Records| Full Access |  Full Access  |  Limited Acccess|
     | Export / Print Reports | Full Access |  Full Access  |  Limited Access |
 
+\\\
 
 ## Validation and Security Protocols
 
