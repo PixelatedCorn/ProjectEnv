@@ -85,13 +85,13 @@ demographic breakdowns.
 
 ## System Access Control
 
-| Feature Modules              | Admin Role  | Encoder Role | Viewer Role |
-
-| **System Configurations**    | Full Access | No Access    | No Access |
-| **Add/Edit Profiles**        | Full Access | Full Access  | No Access |
-| **View Audit Trails**        | Full Access | No Access    | No Access |
-| **Search / Filter Records**  | Full Access | Full Access  | Limited Access |
-| **Export/Print Reports**     | Full Access | Full Access  | Limited Access |
+    | Feature Modules        |  Admin Role |  Encoder Role |   Viewer Role  |
+    |------------------------|-------------|---------------|----------------|
+    | System Configurations  | Full Access |  No Access    |  No Access  |
+    | Add/Edit Profiles      | Full Access |  Full Access  |  No Access  |
+    | View Audit Trails      | Full Access |  No Access    |  No Access  |
+    | Search / Filter Records| Full Access |  Full Access  |  Limited Acccess|
+    | Export / Print Reports | Full Access |  Full Access  |  Limited Access |
 
 
 ## Validation and Security Protocols
