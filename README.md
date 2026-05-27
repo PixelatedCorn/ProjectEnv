@@ -43,7 +43,7 @@ demographic breakdowns.
 
 ## Tech Stack
 - **Backend**: Python
-- **Frontend**: Streamlit
+- **Frontend**: Streamlit, CSS
 - **Simulated Data Base**: SQLite
 - **Libraries**: pandas, streamlit, sqlite3, matplotlib.pyplot, datetime
 
@@ -162,7 +162,7 @@ The system will store PII such as:
 
 *Front end*
 ### [**Nebrao, Faith**] (https://github.com/fey3)
-- Frontend UI
+- Frontend UI (streamlit, CSS)
 
 ---
 
