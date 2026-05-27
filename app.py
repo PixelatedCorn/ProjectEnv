@@ -151,7 +151,7 @@ else:
 
     with st.sidebar:
         if st.session_state.access_level in ["Admin", "Editor"]:
-            if st.button("➕ Add New Resident", use_container_width=True):
+            if st.button("➕ Add New Resident", use_container_width=True, key="add_resident_btn"):
                 st.session_state.sub_page = "Add"
                 st.switch_page(st.session_state.profile_route)
 

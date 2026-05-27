@@ -26,7 +26,6 @@ def calculate_age(birth_date):
 def validate_resident_fields(ln, fn, mn, contact, dob_date, bp, hh, cit, addr, dur, occ):
     errors = []
 
-
     # Name fields
     if not ln.strip():
         errors.append("Surname is required.")
@@ -46,7 +45,7 @@ def validate_resident_fields(ln, fn, mn, contact, dob_date, bp, hh, cit, addr, d
     if not contact.strip():
         errors.append("Contact Number is required.")
     elif not contact.strip().isdigit() or len(contact.strip()) != 11 or not contact.strip().startswith("09"):
-        errors.append("Contact Number must be a valid 11-digit number starting with '09'.")    
+        errors.append("Contact Number must be a valid 11-digit number starting with '09'.")
 
     # Date of Birth
     computed_age = calculate_age(dob_date)
@@ -62,6 +61,8 @@ def validate_resident_fields(ln, fn, mn, contact, dob_date, bp, hh, cit, addr, d
     # Household Number
     if not hh.strip():
         errors.append("Household Number / ID is required.")
+    elif not hh.strip().isdigit():
+        errors.append("Household Number / ID must contain numbers only.")
 
     # Citizenship
     if not cit.strip():
@@ -96,53 +97,51 @@ if mode == "Add":
         ln = n1.text_input("Surname")
         fn = n2.text_input("First Name")
         mn = n3.text_input("Middle Name")
-        
+
         c1, c2, c3 = st.columns(3)
         sex = c1.selectbox("Sex", SEX_OPTS)
         civ = c2.selectbox("Civil Status", CIVIL_OPTS)
-        contact = c3.text_input("Contact Number (e.g., 09171234567)") 
+        contact = c3.text_input("Contact Number (e.g., 09171234567)", max_chars=11)
 
         st.subheader("Birth & Family Structure")
         b1, b2, b3 = st.columns(3)
         dob_date = b1.date_input("Date of Birth", value=date(2000, 1, 1), min_value=date(1900, 1, 1), max_value=date.today())
         bp = b2.text_input("Place of Birth")
-        hh = b3.text_input("Household Number / ID")
+        hh = b3.text_input("Household Number / ID", max_chars=10)
 
         st.subheader("Address & Community Ties")
         cit = st.text_input("Citizenship", value="Filipino")
         addr = st.text_area("Complete Address")
-        
+
         a1, a2, a3 = st.columns(3)
         dur = a1.text_input("Duration of Residence (e.g., 5 Years)")
         purok = a2.selectbox("Purok / Sitio Zone", PUROK_OPTS)
         res_st = a3.selectbox("Residency Status", [s for s in STATUS_OPTS if s != "Archived"])
         occ = st.text_input("Occupation")
-        
+
         st.write("---")
         col_btn1, col_btn2 = st.columns(2)
-        
-        with col_btn1:
-            add_cancelled = st.form_submit_button("Cancel & Go Back", use_container_width=True, key="btn_add_cancel")
-            
-        with col_btn2:
-            save_clicked = st.form_submit_button("Save New Resident Record", use_container_width=True, key="btn_add_save")
 
-        
+        with col_btn1:
+            add_cancelled = st.form_submit_button("Cancel & Go Back", use_container_width=True, key="cancel_add")
+
+        with col_btn2:
+            save_clicked = st.form_submit_button("Save New Resident Record", use_container_width=True, key="save_add")
+
     if add_cancelled:
-                st.switch_page(st.session_state.home_route)
-        
+        st.switch_page(st.session_state.home_route)
+
     if save_clicked:
         errors = validate_resident_fields(ln, fn, mn, contact, dob_date, bp, hh, cit, addr, dur, occ)
 
         if errors:
             for err in errors:
                 st.error(f"⚠️ {err}")
-            
         else:
             computed_age = calculate_age(dob_date)
             dob_str = dob_date.strftime("%Y-%m-%d")
             active_editor = st.session_state.username if "username" in st.session_state else "System Manager"
-            
+
             with sqlite3.connect("Residents.db") as conn:
                 conn.execute("""
                     INSERT INTO residents (
@@ -150,8 +149,8 @@ if mode == "Add":
                         sex, contact_info, address, duration_residence, residency_status, 
                         civil_status, citizenship, occupation, age, purok, last_modified_by
                     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                """, (ln.strip(), fn.strip(), mn.strip(), dob_str, bp.strip(), hh.strip(), 
-                      sex, contact.strip(), addr.strip(), dur.strip(), res_st, civ, cit.strip(), 
+                """, (ln.strip(), fn.strip(), mn.strip(), dob_str, bp.strip(), hh.strip(),
+                      sex, contact.strip(), addr.strip(), dur.strip(), res_st, civ, cit.strip(),
                       occ.strip(), computed_age, purok, active_editor))
                 conn.commit()
             st.success("✅ Profile saved successfully!")
@@ -164,23 +163,23 @@ else:
     if not rid:
         st.warning("Please select a resident from the Home directory first.")
         st.stop()
-        
+
     with sqlite3.connect("Residents.db") as conn:
         conn.row_factory = sqlite3.Row
         res = conn.execute("SELECT * FROM residents WHERE id=?", (rid,)).fetchone()
 
     if mode == "View":
         st.title(f"Resident Profile: {res['surname']}, {res['first_name']}")
-        
+
         modifier = res["last_modified_by"] if res["last_modified_by"] else "Unknown User"
         st.caption(f"✍🏽 **System Audit Trail:** This record was last modified or registered by user account: `{modifier}`")
-        
+
         resident_age = res["age"] if res["age"] is not None else 0
         if resident_age >= 60:
             st.warning(f"👵🏽👴🏽 **Demographic Alert:** This resident is a Senior Citizen ({resident_age}yo)")
         elif resident_age < 18:
             st.info(f"👶🏽 **Demographic Alert:** This resident is a Minor ({resident_age}yo)")
-            
+
         if res["residency_status"] == "Archived":
             st.error("📂 **Status Alert:** This record is currently Archived.")
 
@@ -189,7 +188,7 @@ else:
         n1.text_input("Surname", res["surname"], disabled=True)
         n2.text_input("First Name", res["first_name"], disabled=True)
         n3.text_input("Middle Name", res["middle_name"], disabled=True)
-        
+
         c1, c2, c3 = st.columns(3)
         c1.text_input("Sex", res["sex"], disabled=True)
         c2.text_input("Age (Auto-Calculated)", str(resident_age), disabled=True)
@@ -209,16 +208,16 @@ else:
         b3.text_input("Household Number / ID", res["household_no"], disabled=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown('<div class="section-title"> Birth & Address & Community Ties</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title"> Address & Community Ties</div>', unsafe_allow_html=True)
         st.text_input("Purok / Sitio Zone", res["purok"] if res["purok"] else "Unassigned", disabled=True)
         st.text_area("Complete Address", res["address"], disabled=True)
         st.markdown("</div>", unsafe_allow_html=True)
-        
+
         a1, a2, a3 = st.columns(3)
         a1.text_input("Duration of Residence", res["duration_residence"], disabled=True)
         a2.text_input("Residency Status", res["residency_status"], disabled=True)
         a3.text_input("Occupation", res["occupation"], disabled=True)
-        
+
         st.markdown("""
         <hr style="
         height:2px;
@@ -246,7 +245,7 @@ else:
         margin-bottom:25px;
         ">
         """, unsafe_allow_html=True)
-            
+
             with st.expander("📂 Records Management (Archive Switch)", expanded=False):
                 active_editor = st.session_state.username
                 if res["residency_status"] == "Archived":
@@ -282,39 +281,37 @@ else:
             c1, c2, c3 = st.columns(3)
             esex = c1.selectbox("Sex", SEX_OPTS, index=SEX_OPTS.index(res["sex"]) if res["sex"] in SEX_OPTS else 0)
             eciv = c2.selectbox("Civil Status", CIVIL_OPTS, index=CIVIL_OPTS.index(res["civil_status"]) if res["civil_status"] in CIVIL_OPTS else 0)
-            econtact = c3.text_input("Contact Number", value=res["contact_info"] if res["contact_info"] else "")
-
+            econtact = c3.text_input("Contact Number", value=res["contact_info"] if res["contact_info"] else "", max_chars=11)
 
             st.subheader("Birth & Family Structure")
             b1, b2, b3 = st.columns(3)
             edob_date = b1.date_input("Date of Birth", value=default_date, min_value=date(1900, 1, 1), max_value=date.today())
             ebp = b2.text_input("Place of Birth", res["birth_place"])
-            ehh = b3.text_input("Household Number / ID", res["household_no"])
-
+            ehh = b3.text_input("Household Number / ID", res["household_no"], max_chars=10)
 
             st.markdown('<div class="info-section">', unsafe_allow_html=True)
             st.subheader("Address & Community Ties")
             ecit = st.text_input("Citizenship", res["citizenship"])
             eaddr = st.text_area("Complete Address", res["address"])
-            
+
             a1, a2, a3 = st.columns(3)
             edur = a1.text_input("Duration of Residence", res["duration_residence"])
-            
+
             default_purok_idx = PUROK_OPTS.index(res["purok"]) if res["purok"] in PUROK_OPTS else 0
             epurok = a2.selectbox("Purok / Sitio Zone", PUROK_OPTS, index=default_purok_idx)
-            
+
             eres_st = a3.selectbox("Residency Status", STATUS_OPTS, index=STATUS_OPTS.index(res["residency_status"]) if res["residency_status"] in STATUS_OPTS else 0)
             eocc = st.text_input("Occupation", res["occupation"])
 
             st.write("---")
-            
+
             col_ebtn1, col_ebtn2 = st.columns(2)
 
             with col_ebtn1:
-                edit_cancelled = st.form_submit_button("Cancel Changes", use_container_width=True, key="btn_edit_cancel")
-            
+                edit_cancelled = st.form_submit_button("Cancel Changes", use_container_width=True, key="cancel_edit")
+
             with col_ebtn2:
-                edit_saved = st.form_submit_button("Save Structural Changes", use_container_width=True)
+                edit_saved = st.form_submit_button("Save Structural Changes", use_container_width=True, key="save_edit")
 
             if edit_cancelled:
                 st.session_state.sub_page = "View"
@@ -330,7 +327,7 @@ else:
                     updated_age = calculate_age(edob_date)
                     edob_str = edob_date.strftime("%Y-%m-%d")
                     active_editor = st.session_state.username
-                    
+
                     with sqlite3.connect("Residents.db") as conn:
                         conn.execute("""
                             UPDATE residents SET 
@@ -338,7 +335,7 @@ else:
                                 sex=?, contact_info=?, address=?, duration_residence=?, residency_status=?, civil_status=?, 
                                 citizenship=?, occupation=?, age=?, purok=?, last_modified_by=?
                             WHERE id=?
-                        """, (eln.strip(), efn.strip(), emn.strip(), edob_str, ebp.strip(), ehh.strip(), esex, econtact.strip(), eaddr.strip(), edur.strip(), eres_st, eciv, ecit.strip(), eocc.strip(), updated_age, epurok, active_editor, rid)) # <-- CHANGED '' to econtact.strip()
+                        """, (eln.strip(), efn.strip(), emn.strip(), edob_str, ebp.strip(), ehh.strip(), esex, econtact.strip(), eaddr.strip(), edur.strip(), eres_st, eciv, ecit.strip(), eocc.strip(), updated_age, epurok, active_editor, rid))
                         conn.commit()
 
                     st.success("✅ Changes saved successfully!")

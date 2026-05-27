@@ -91,8 +91,15 @@ def apply_style(page_name):
         """,
         
         # for Home Page
+      
         "home": """
         <style>
+        /* Logout button → Red */
+        [data-testid="stSidebarNav"] ~ div button,
+        section[data-testid="stSidebar"] button {
+        background-color: #e53935 !important;
+        color: white !important;
+        }
         .stApp { 
         background-color: #f4f8fc; 
         }
@@ -188,6 +195,30 @@ def apply_style(page_name):
         #for Profile Page
         "profile": """
         <style>
+        /* Cancel buttons → Red */
+        .st-key-cancel_add button,
+        .st-key-cancel_edit button {
+         background-color: #e53935 !important;
+        color: white !important;
+        }
+
+        /* Save buttons → Green */
+        .st-key-save_add button,
+        .st-key-save_edit button {
+         background-color: #2e7d32 !important;
+        color: white !important;
+        }
+
+        /* Keep hover consistent */
+        .st-key-cancel_add button:hover,
+        .st-key-cancel_edit button:hover {
+        background-color: #b71c1c !important;
+        }
+
+        .st-key-save_add button:hover,
+        .st-key-save_edit button:hover {
+        background-color: #1b5e20 !important;
+        }
         .stApp { background-color: #f4f8fc; }
 
         .info-section {
@@ -261,7 +292,12 @@ def apply_style(page_name):
         #for Accounts Page
         "accounts": """
         <style>
-
+        /* Logout button → Red */
+        [data-testid="stSidebarNav"] ~ div button,
+        section[data-testid="stSidebar"] button {
+        background-color: #e53935 !important;
+        color: white !important;
+        }
         .page-title { 
         font-size: 34px; 
         font-weight: 700; 
