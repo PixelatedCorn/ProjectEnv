@@ -170,7 +170,3 @@ The system will store PII such as:
 ### [**Barcil, Angel**] (https://github.com/zyeayi)
 - Documentation
 - Bug Testing
-
-### [**Erro, Keith**] (https://github.com/Kerro-orre)
-- Documentation
-- Bug Testing
