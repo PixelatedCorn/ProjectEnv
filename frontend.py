@@ -206,36 +206,37 @@ def apply_style(page_name):
         border-radius: 10px; 
         }
 
-        .stButton > button { 
-        background: linear-gradient(90deg, #163B65, #245082) !important;
-        color: white !important;
-        border-radius: 10px !important;
-        border: none !important;
-        font-weight: 600 !important;
-        }
-        .save-btn button {
-            background-color: #16a34a !important;
+        .stFormSubmitButton button {
             color: white !important;
-            border: none !important;
             border-radius: 10px !important;
-            font-weight: 600 !important;
-        }
-
-        .save-btn button:hover {
-            background-color: #15803d !important;
-        }
-
-        .cancel-btn button {
-            background-color: #dc2626 !important;
-            color: white !important;
             border: none !important;
-            border-radius: 10px !important;
             font-weight: 600 !important;
+            padding: 12px !important;
+            transition: background-color 0.2s ease-in-out !important;
         }
 
-        .cancel-btn button:hover {
-            background-color: #b91c1c !important;
+        .stFormSubmitButton button:has(p:contains("Cancel")),
+        .stFormSubmitButton button:contains("Cancel") {
+            background-color: #D32F2F !important; /* Bold Crimson Red */
         }
+
+        .stFormSubmitButton button:has(p:contains("Cancel")):hover,
+        .stFormSubmitButton button:contains("Cancel"):hover {
+            background-color: #9A1F1F !important; /* Dark Red hover */
+        }
+
+        .stFormSubmitButton button:has(p:contains("Save")),
+        .stFormSubmitButton button:contains("Save") {
+            background-color: #2E7D32 !important; /* Bold Emerald Green */
+        }
+        
+        .stFormSubmitButton button:has(p:contains("Save")):hover,
+        .stFormSubmitButton button:contains("Save"):hover {
+            background-color: #1B5E20 !important; /* Dark Green hover */
+        }
+
+
+
         .stDownloadButton button { 
         background-color: #fa00af !important; 
         color: white !important; 

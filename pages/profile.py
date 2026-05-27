@@ -23,8 +23,9 @@ def calculate_age(birth_date):
     age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
     return max(0, age)
 
-def validate_resident_fields(ln, fn, mn, dob_date, bp, hh, cit, addr, dur, occ):
+def validate_resident_fields(ln, fn, mn, contact, dob_date, bp, hh, cit, addr, dur, occ):
     errors = []
+
 
     # Name fields
     if not ln.strip():
@@ -41,6 +42,11 @@ def validate_resident_fields(ln, fn, mn, dob_date, bp, hh, cit, addr, dur, occ):
         errors.append("Middle Name is required.")
     elif not mn.strip().replace(" ", "").replace("-", "").isalpha():
         errors.append("Middle Name must contain letters only.")
+
+    if not contact.strip():
+        errors.append("Contact Number is required.")
+    elif not contact.strip().isdigit() or len(contact.strip()) != 11 or not contact.strip().startswith("09"):
+        errors.append("Contact Number must be a valid 11-digit number starting with '09'.")    
 
     # Date of Birth
     computed_age = calculate_age(dob_date)
@@ -91,9 +97,10 @@ if mode == "Add":
         fn = n2.text_input("First Name")
         mn = n3.text_input("Middle Name")
         
-        c1, c2 = st.columns(2)
+        c1, c2, c3 = st.columns(3)
         sex = c1.selectbox("Sex", SEX_OPTS)
         civ = c2.selectbox("Civil Status", CIVIL_OPTS)
+        contact = c3.text_input("Contact Number (e.g., 09171234567)") 
 
         st.subheader("Birth & Family Structure")
         b1, b2, b3 = st.columns(3)
@@ -112,32 +119,44 @@ if mode == "Add":
         occ = st.text_input("Occupation")
         
         st.write("---")
-        if st.form_submit_button("Cancel", use_container_width=True):
-            st.switch_page(st.session_state.home_route)
-        if st.form_submit_button("Save New Resident Record", use_container_width=True):
-            errors = validate_resident_fields(ln, fn, mn, dob_date, bp, hh, cit, addr, dur, occ)
+        col_btn1, col_btn2 = st.columns(2)
+        
+        with col_btn1:
+            add_cancelled = st.form_submit_button("Cancel & Go Back", use_container_width=True, key="btn_add_cancel")
+            
+        with col_btn2:
+            save_clicked = st.form_submit_button("Save New Resident Record", use_container_width=True, key="btn_add_save")
 
-            if errors:
-                for err in errors:
-                    st.error(f"⚠️ {err}")
-            else:
-                computed_age = calculate_age(dob_date)
-                dob_str = dob_date.strftime("%Y-%m-%d")
-                active_editor = st.session_state.username
-                
-                with sqlite3.connect("Residents.db") as conn:
-                    conn.execute("""
-                        INSERT INTO residents (
-                            surname, first_name, middle_name, dob, birth_place, household_no,
-                            sex, contact_info, address, duration_residence, residency_status, 
-                            civil_status, citizenship, occupation, age, purok, last_modified_by
-                        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                    """, (ln.strip(), fn.strip(), mn.strip(), dob_str, bp.strip(), hh.strip(), 
-                          sex, '', addr.strip(), dur.strip(), res_st, civ, cit.strip(), 
-                          occ.strip(), computed_age, purok, active_editor))
-                    conn.commit()
-                st.success("✅ Profile saved successfully!")
+        
+    if add_cancelled:
                 st.switch_page(st.session_state.home_route)
+        
+    if save_clicked:
+        errors = validate_resident_fields(ln, fn, mn, contact, dob_date, bp, hh, cit, addr, dur, occ)
+
+        if errors:
+            for err in errors:
+                st.error(f"⚠️ {err}")
+            
+        else:
+            computed_age = calculate_age(dob_date)
+            dob_str = dob_date.strftime("%Y-%m-%d")
+            active_editor = st.session_state.username if "username" in st.session_state else "System Manager"
+            
+            with sqlite3.connect("Residents.db") as conn:
+                conn.execute("""
+                    INSERT INTO residents (
+                        surname, first_name, middle_name, dob, birth_place, household_no,
+                        sex, contact_info, address, duration_residence, residency_status, 
+                        civil_status, citizenship, occupation, age, purok, last_modified_by
+                    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                """, (ln.strip(), fn.strip(), mn.strip(), dob_str, bp.strip(), hh.strip(), 
+                      sex, contact.strip(), addr.strip(), dur.strip(), res_st, civ, cit.strip(), 
+                      occ.strip(), computed_age, purok, active_editor))
+                conn.commit()
+            st.success("✅ Profile saved successfully!")
+            st.switch_page(st.session_state.home_route)
+
 
 # --- VIEW & EDIT MODES ---
 else:
@@ -175,6 +194,8 @@ else:
         c1.text_input("Sex", res["sex"], disabled=True)
         c2.text_input("Age (Auto-Calculated)", str(resident_age), disabled=True)
         c3.text_input("Civil Status", res["civil_status"], disabled=True)
+
+        st.text_input("Contact Information", res["contact_info"] if res["contact_info"] else "None Provided", disabled=True)
 
         st.markdown('<div class="section-title"> Birth & Family Structure</div>', unsafe_allow_html=True)
         b1, b2, b3 = st.columns(3)
@@ -257,10 +278,11 @@ else:
             eln = n1.text_input("Surname", res["surname"])
             efn = n2.text_input("First Name", res["first_name"])
             emn = n3.text_input("Middle Name", res["middle_name"])
-            
-            c1, c2 = st.columns(2)
+
+            c1, c2, c3 = st.columns(3)
             esex = c1.selectbox("Sex", SEX_OPTS, index=SEX_OPTS.index(res["sex"]) if res["sex"] in SEX_OPTS else 0)
             eciv = c2.selectbox("Civil Status", CIVIL_OPTS, index=CIVIL_OPTS.index(res["civil_status"]) if res["civil_status"] in CIVIL_OPTS else 0)
+            econtact = c3.text_input("Contact Number", value=res["contact_info"] if res["contact_info"] else "")
 
 
             st.subheader("Birth & Family Structure")
@@ -283,37 +305,23 @@ else:
             
             eres_st = a3.selectbox("Residency Status", STATUS_OPTS, index=STATUS_OPTS.index(res["residency_status"]) if res["residency_status"] in STATUS_OPTS else 0)
             eocc = st.text_input("Occupation", res["occupation"])
-            
-            st.markdown("""
-            <hr style="
-            height:2px;
-            border:none;
-            background-color:#7f8ea3;
-            margin-top:25px;
-            margin-bottom:25px;
-            ">
-            """, unsafe_allow_html=True)
-            
-            btn1, btn2 = st.columns(2)
 
-            save_btn = btn1.form_submit_button(
-                "Save Structural Changes",
-                use_container_width=True,
-                type="primary"
-            )
+            st.write("---")
             
-            cancel_btn = btn2.form_submit_button(
-                "Cancel",
-                use_container_width=True,
-                type="secondary"
-            )
+            col_ebtn1, col_ebtn2 = st.columns(2)
 
-            if save_btn:
-                errors = validate_resident_fields(
-                    eln, efn, emn,
-                    edob_date, ebp, ehh,
-                    ecit, eaddr, edur, eocc
-                )
+            with col_ebtn1:
+                edit_cancelled = st.form_submit_button("Cancel Changes", use_container_width=True, key="btn_edit_cancel")
+            
+            with col_ebtn2:
+                edit_saved = st.form_submit_button("Save Structural Changes", use_container_width=True)
+
+            if edit_cancelled:
+                st.session_state.sub_page = "View"
+                st.rerun()
+
+            if edit_saved:
+                errors = validate_resident_fields(eln, efn, emn, econtact, edob_date, ebp, ehh, ecit, eaddr, edur, eocc)
 
                 if errors:
                     for err in errors:
@@ -322,29 +330,17 @@ else:
                     updated_age = calculate_age(edob_date)
                     edob_str = edob_date.strftime("%Y-%m-%d")
                     active_editor = st.session_state.username
-
+                    
                     with sqlite3.connect("Residents.db") as conn:
                         conn.execute("""
                             UPDATE residents SET 
                                 surname=?, first_name=?, middle_name=?, dob=?, birth_place=?, household_no=?,
-                                sex=?, address=?, duration_residence=?, residency_status=?, civil_status=?, 
+                                sex=?, contact_info=?, address=?, duration_residence=?, residency_status=?, civil_status=?, 
                                 citizenship=?, occupation=?, age=?, purok=?, last_modified_by=?
                             WHERE id=?
-                        """, (
-                            eln.strip(), efn.strip(), emn.strip(),
-                            edob_str, ebp.strip(), ehh.strip(),
-                            esex, eaddr.strip(), edur.strip(),
-                            eres_st, eciv, ecit.strip(),
-                            eocc.strip(), updated_age,
-                            epurok, active_editor, rid
-                        ))
-
+                        """, (eln.strip(), efn.strip(), emn.strip(), edob_str, ebp.strip(), ehh.strip(), esex, econtact.strip(), eaddr.strip(), edur.strip(), eres_st, eciv, ecit.strip(), eocc.strip(), updated_age, epurok, active_editor, rid)) # <-- CHANGED '' to econtact.strip()
                         conn.commit()
 
                     st.success("✅ Changes saved successfully!")
                     st.session_state.sub_page = "View"
                     st.switch_page(st.session_state.home_route)
-
-            if cancel_btn:
-                st.session_state.sub_page = "View"
-                st.rerun()
